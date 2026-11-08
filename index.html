@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Endzone 2141 v0.76.2</title>
+<title>Endzone 2141 v0.76.3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
@@ -321,8 +321,10 @@ nav button.on .ic{filter:drop-shadow(0 0 6px rgba(255,63,164,.7))}
 .cbub .cmpt{font-size:13px;margin-top:4px}.cbub .cmpt>*{padding:3px 0}
 header,nav{zoom:1.08}
 .pgrid2 .btn{flex-direction:column;gap:2px;text-align:center}.pgrid2 .chance{margin:0}
-[data-a].armed{position:relative;transform:scale(1.04);box-shadow:0 0 0 2px var(--pink),0 0 18px rgba(255,63,164,.55)!important;z-index:2;transition:transform .12s ease-out}
-@media (prefers-reduced-motion:reduce){[data-a].armed{transform:none}}
+[data-a].armed{position:relative;scale:1.07;box-shadow:0 0 0 2px var(--pink),0 0 18px rgba(255,63,164,.55)!important;z-index:2;transition:scale .14s ease-out;animation:armpop .22s ease-out}/*v0.76.3 (demande du joueur) : au premier toucher d'un double toucher le bouton grossit de 7 % avec un petit rebond (avant 4 % sans rebond), pour donner envie de retaper ; la propriété `scale` ne se bat pas avec les `transform` des boutons*/
+.btn.main[data-a].armed{box-shadow:0 0 0 3px #ffe3f1,0 0 22px rgba(255,63,164,.85)!important}/*bouton déjà rose : liseré clair pour que le premier toucher se voie*/
+@keyframes armpop{0%{scale:1}55%{scale:1.11}100%{scale:1.07}}
+@media (prefers-reduced-motion:reduce){[data-a].armed{scale:1.03;animation:none}}
 .pa i.xtra{border-color:var(--amber)}.pa i.xtra.on{background:var(--amber)}
 .grid3z{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.grid3z .btn{flex-direction:column;gap:0;padding-left:4px;padding-right:4px}
 .sheet .sfoot{position:sticky;bottom:calc(-16px - env(safe-area-inset-bottom,0px));margin:14px -16px calc(-16px - env(safe-area-inset-bottom,0px));padding:10px 16px calc(14px + env(safe-area-inset-bottom,0px));background:var(--panel);border-top:1px solid var(--line);box-shadow:0 -8px 16px rgba(0,0,0,.35);z-index:2}
@@ -882,7 +884,7 @@ nav .dot{position:absolute;top:5px;left:calc(50% + 7px);width:9px;height:9px;bor
  Fin du fichier : démarrage (load, awayCheck) puis render().
 ============================================================================ */
 'use strict';
-const VERSION='0.76.2';
+const VERSION='0.76.3';
 // Niveau maximum du personnage (v0.12.12, décision du joueur du 24/10/2026 : 40, atteint en environ 10 h sans auto-combat ; extensible). Tranches des abris : voir ABRIS (lv, lvl) et docs/GDD.md.
 const LVMAX=40;
 // Dégâts minimum d'un coup ennemi, en part du coup brut (v0.12.13, décision liée au journal #8 du joueur) : l'armure et la réduction fixe ne peuvent plus ramener un coup à 1 PV. Ne touche pas les persos peu armés.
@@ -5377,6 +5379,7 @@ function selfTest(){const keep=JSON.stringify(S),ui={tab:UI.tab,modal:UI.modal,c
    const x1=S.xp;S.run.map[S.run.e][S.run.r]=['fouille'];S.run.sc='map';{const R0=rnd;try{rnd=()=>.99;enterRoom(0)}finally{rnd=R0}}ck('XP d’exploration : la fouille en donne',S.xp>x1||S.lvl>l0,0);S.run=null;
    ck('XP : multiplicateur général 2 sur les 5 abris (v0.19.0)',XPK===2&&Math.abs(XPM.iode-.86*2)<1e-9&&Math.abs(XPM.lenine-PK_XP*2)<1e-9,XPM);
    ck('double toucher : forge et retouches de l’atelier',['forge','wup','wre','wrar','wcal','fuse'].every(a=>CONF_A.includes(a)),0);
+   ck('double toucher : fabrication à l’Établi (craft)',CONF_A.includes('craft'),0);
    ck('pastille Établi : supprimée (elle revenait à chaque retour)',!('etabli' in marcheDots()),Object.keys(marcheDots()))});
   t('butin au niveau du joueur, Prototype du boss (v0.19.0)',()=>{fresh();S.st.bk={lenine:1,ligne2:1};S.en=900;S.lvl=17;dirty();startRun('iode');S.run.e=0;S.run.r=0;
    ck('butin : plancher au niveau du joueur au début d’un abri',ilvl()===17,ilvl());S.lvl=25;ck('butin : plancher limité au haut de la tranche de l’abri (20)',ilvl()===20,ilvl());S.lvl=10;ck('butin : plafond niveau + 2 inchangé',ilvl()===12,ilvl());S.run=null});
@@ -5919,7 +5922,7 @@ const ACT={
  reset:()=>{if(UI.confirm!=='reset'){UI.confirm='reset';render();return}try{localStorage.removeItem(SAVE_KEY)}catch(e){}S=freshState();uiClear();UI.confirm=null;UI.tab='zone';UI.exp=null;UI.modal=null;render()}
 };
 /* --- double validation (v0.6.5) : 1er toucher = sélection, 2e = validation --- */
-const CONF_A=['fuse','run','room','atk','aim','cov','talk','flee','end','auto','evo','extract','evac','pact','fw','forge','wup','wre','wrar','wcal','descend','perk','growpick','spend','atval','use','sell','sellall','scrap','bsell','bscrap','sellmats','scraprust','crewsend','crewhire','crewfire','crewtrain','crewgear','job','jobstop','ctrtake','ctrdrop','ctrreroll','facdon'];
+const CONF_A=['fuse','run','room','atk','aim','cov','talk','flee','end','auto','evo','extract','evac','pact','fw','forge','wup','wre','wrar','wcal','craft','descend','perk','growpick','spend','atval','use','sell','sellall','scrap','bsell','bscrap','sellmats','scraprust','crewsend','crewhire','crewfire','crewtrain','crewgear','job','jobstop','ctrtake','ctrdrop','ctrreroll','facdon'];
 let ARM=null,ARMT=0;
 function confOn(){return !S||S.confirm!==false}
 function disarm(){if(ARM){ARM.classList.remove('armed');if(ARM._t!=null){ARM.innerHTML=ARM._t;ARM._t=null}ARM=null}clearTimeout(ARMT)}
