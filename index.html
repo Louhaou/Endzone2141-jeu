@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Endzone 2141 v0.76.4</title>
+<title>Endzone 2141 v0.77.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
@@ -884,7 +884,7 @@ nav .dot{position:absolute;top:5px;left:calc(50% + 7px);width:9px;height:9px;bor
  Fin du fichier : démarrage (load, awayCheck) puis render().
 ============================================================================ */
 'use strict';
-const VERSION='0.76.4';
+const VERSION='0.77.0';
 // Niveau maximum du personnage (v0.12.12, décision du joueur du 24/10/2026 : 40, atteint en environ 10 h sans auto-combat ; extensible). Tranches des abris : voir ABRIS (lv, lvl) et docs/GDD.md.
 const LVMAX=40;
 // Dégâts minimum d'un coup ennemi, en part du coup brut (v0.12.13, décision liée au journal #8 du joueur) : l'armure et la réduction fixe ne peuvent plus ramener un coup à 1 PV. Ne touche pas les persos peu armés.
@@ -967,7 +967,7 @@ const SK={legeres:['Armes légères','PER'],lourdes:['Armes lourdes','FOR'],ener
    elDm : dégâts des élites (en plus de leurs PV x1,6).
    boucher : part des PV max rendue par Boucher du Combinat à chaque ennemi tué.
    add : PV et dégâts des renforts des boss (x la table de l'étage du boss) : une gêne, pas un deuxième combat. */
-const EQ={dg:1.075,rar:[.85,1,1.08,1.16,1.3,1.42],relHp:12,rarLv:[0,0,3,9,18,28],elGear:.5,lvlHeal:.25,paKeep:2,brute:.15,forPt:.06,add:[.35,.7],boucher:.04,elDm:1.25,over:[.06,.3]};
+const EQ={dg:1.075,rar:[.85,1,1.12,1.25,1.4,1.55],relHp:12,rarLv:[0,0,6,12,22,32],elGear:.5,lvlHeal:.25,paKeep:2,brute:.15,forPt:.06,add:[.35,.7],boucher:.04,elDm:1.25,over:[.06,.3]};
 /* CURSEURS DU JOUEUR (v0.13.0, écran « Réglages » du mode admin) : multiplicateurs de test rangés à part de la sauvegarde (clé CUR_KEY, jamais dans endzone_save),
    notés en tête du journal des descentes pour être reportés dans EQ / TUNE / TUNEB / XPM. Sans effet pendant SIM (simBot, selfTest, outils). */
 const CUR_KEY='endzone_reglages';
@@ -1778,7 +1778,7 @@ const ABRIS=[
  {id:'kova',n:'Station d’épuration n°3',lv:20,pacts:1,recLv:28,amb:.16,et:8,rows:3,cost:25,rad0:16,hm:4.8,dm:5.2,leg:2,rel:.7,rw:{fouille:12},needBoss:'iode',boss:'president',adds:'syndic',sn:'Station n°3',up:1,liftEvery:2,vanne:1,
   pools:[['squat','pigeons'],['squat','concierge'],['pigeons','squat'],['concierge','pigeons'],['syndic','squat'],['syndic','concierge'],['concierge','syndic'],['syndic','concierge']],
   d:'Huit bassins à remonter à contre-courant, du dégrillage au décanteur. L’ascenseur de service ne s’arrête qu’aux bassins pairs. À chaque palier, tu peux ouvrir une vanne : le bassin suivant sera inondé, plus dangereux, plus généreux.',lvl:'20 à 30'},
- {id:'aurora',n:'Centrale Aurora-4',lv:30,recLv:38,amb:.17,et:8,rows:3,cost:30,rad0:22,hm:6.2,dm:6.4,leg:2,rel:1.8,surch:1,rw:{terminal:12},needBoss:'kova',boss:'volkov',adds:'liquid',sn:'Aurora-4',liftEvery:2,
+ {id:'aurora',n:'Centrale Aurora-4',lv:30,recLv:38,amb:.17,et:8,rows:3,cost:30,rad0:22,hm:6.2,dm:6.4,leg:2,rel:.7/*v0.77.0 : 1,8 -> 0,7 (Reliques portées 64 -> 47 % à Aurora)*/,surch:1,rw:{terminal:12},needBoss:'kova',boss:'volkov',adds:'liquid',sn:'Aurora-4',liftEvery:2,
   pools:[['operateur','lueur'],['operateur','liquid'],['lueur','operateur'],['liquid','lueur'],['robotl','operateur'],['robotl','liquid'],['liquid','robotl'],['robotl','operateur']],
   d:'Là où tout a commencé. Huit niveaux sous le hall des turbines, jusqu’à la salle de commande du réacteur. Il ronronne encore, et il a faim. L’ascenseur ne s’arrête qu’aux niveaux pairs. À chaque palier, tu peux pousser le réacteur : le niveau suivant sera en surchauffe, deux fois plus radioactif, mais bien plus généreux.',lvl:'30 à 40'}];
 const ROOMS={
@@ -2041,12 +2041,14 @@ function aStats(it){
  if(b.s!=='acc'){ar=pmArmor(effLv(it.l,it.r))*(ARSH[b.s]||.2)*(b.q||1)*st;let f=1;for(const a of it.a){if(a.v.sd)f+=a.v.sd*.04;if(a.v.rd)f+=a.v.rd*.025}ar*=f}
  return{ar:Math.round(ar),rr:Math.round(b.rr*st)};
 }
+/* v0.77.0 (chantier butin) : la valeur d'une pièce suit d'abord sa RARETÉ (ECO.vr : chaque cran x2) et son NIVEAU (ECO.vn : celle des prix de la forge jusqu'au niveau 12, plus douce ensuite, pour qu'une descente réussie rapporte 1 à 1,5 forge Modifié du niveau),
+   le type d'objet ne joue que de +/- 30 % (valTyp). Revente à Charisme 5 = 20 % de la valeur. Vendue, une rareté vaut toujours plus que celle du dessous (même niveau, même état). */
+function valTyp(b){return clamp(Math.pow(Math.max(20,b.p)/800,.15),.7,1.3)}
 function itemValue(it){
  const b=B[it.b];if(isStack(it))return b.p;
- return b.p*RARS[it.r].val*(1+.05*it.l)*(1+ECO.haut*Math.max(0,it.l-30));
+ return ECO.vr[it.r]*ecoLerp(ECO.vn,it.l)/ECO.vk*valTyp(b);
 }
-const MINP=[3,12,40,120,400,1200];
-function sellPrice(it){if(!isStack(it)){const m=MINP[it.r]||3;const v0=(ECO.vente[it.r]||1)*facSellM()*itemValue(it)*(.12+attr('CHA')*.016)*(1+skill('baratin')/400)*(hasPerk('tapis')?1.3:1)*(pal('CHA')>=1?PAL_SELL:1)*(.4+.6*it.c);return Math.max(m,Math.round(v0))}const v=facSellM()*itemValue(it)*(.12+attr('CHA')*.016)*(1+skill('baratin')/400)*(hasPerk('tapis')?1.3:1)*(isStack(it)?1:(.4+.6*it.c));return Math.max(1,Math.round(v))}
+function sellPrice(it){if(!isStack(it)){const m=1;const v0=facSellM()*itemValue(it)*(.12+attr('CHA')*.016)*(1+skill('baratin')/400)*(hasPerk('tapis')?1.3:1)*(pal('CHA')>=1?PAL_SELL:1)*(.4+.6*it.c);return Math.max(m,Math.round(v0))}const v=facSellM()*itemValue(it)*(.12+attr('CHA')*.016)*(1+skill('baratin')/400)*(hasPerk('tapis')?1.3:1)*(isStack(it)?1:(.4+.6*it.c));return Math.max(1,Math.round(v))}
 function buyPrice(v){return Math.max(1,Math.round(facBuyM()*v*(pal('CHA')>=1?PAL_BUY:1)*(1.5-attr('CHA')*.03)*(1-skill('baratin')/300)))}
 function itemSub(it){
  const b=B[it.b];
@@ -2190,9 +2192,15 @@ function rollRar(ctx){
  // v0.13.0 : chaque rareté arrive avec le niveau du joueur (EQ.rarLv) : poids x (niveau / rarLv)² en dessous.
  const gate=rarGate;
  const rel=((S.run&&abri().rel)||0)*(ctx.rel||1)*(vnOn()?1.5:1)*(svOn()?SV_REL:1);
- const pairs=RARS.map((r,i)=>[i,gate(i)*(i===5?r.w*up*rel:(i>=2?r.w*up:r.w)*(i===4?lg:1))]).filter(p=>p[0]>=(ctx.min||0));if(!pairs.some(p=>p[1]>0))return Math.max(ctx.min||0,1);
- return wpick(pairs);
+ // v0.77.0 : au Parking, les garanties « au moins Modifié » (élites, coffres, salles irradiées...) descendent d'un cran, sauf le premier objet du boss (ctx.boss).
+ const mn=Math.max(0,(ctx.min||0)-(!ctx.boss&&(ctx.min||0)>=2&&S.run&&S.run.ab==='lenine'?1:0));
+ const pairs=RARS.map((r,i)=>[i,gate(i)*(i===5?r.w*up*rel:(i>=2?r.w*up:r.w)*(i===4?lg:1))]).filter(p=>p[0]>=mn);if(!pairs.some(p=>p[1]>0))return Math.max(mn,1);
+ return bolUp(wpick(pairs));
 }
+/* COUP DE BOL (v0.77.0, choix du joueur) : chaque objet tiré au hasard pendant une descente a BOL_P de chances de monter d'une rareté, annoncé dans le journal.
+   Relique seulement dans les abris qui en donnent (champ rel). Parking : violet environ 1 descente sur 5, Légendaire 1 sur 40 ; Ligne 2 : Légendaire 1 sur 8. */
+const BOL_P=.01,BOL_TXT=['Coup de bol ! Sous la crasse, c’était du beau matos.','Coup de bol ! Le Bureau a mal fait son inventaire.','Coup de bol ! Ça brille. Ça ne devrait pas.','Coup de bol ! Le précédent propriétaire avait du goût, et plus de tête.'];
+function bolUp(r){if(!S.run||r>=5||r<1||!chance(BOL_P))return r;if(r===4&&!(abri().rel>0))return r;S.run.bol=(S.run.bol||0)+1;if(!SIM){log(pick(BOL_TXT)+' '+RARS[r+1].n+' au lieu de '+RARS[r].n+'.','crit');toast('Coup de bol : '+RARS[r+1].n+' !','q')}return r+1}
 function randomLoot(ilvl,ctx){
  ctx=ctx||{};
  const cat=ctx.gear?wpick([['w',30],['a',50],['x',20]]):wpick([['w',10],['a',17],['x',7],['c',20],['m',16]]);
@@ -2458,7 +2466,7 @@ const XPM={lenine:PK_XP*XPK,ligne2:.43*XPK,iode:.86*XPK,kova:.72*XPK,aurora:1.1*
    luxe : lot de luxe de Sokol (une pièce Légendaire par arrivage) : from = niveau du joueur minimum, prix = kopeks selon le niveau de l'objet, interpolés entre les points [niveau, kopeks].
    forge : forge de Gleb (pièce neuve au niveau du joueur, jamais au-dessus du Prototype) : prix = kopeks par niveau (Modifié), x proto pour un Prototype ; mat = [départ, par niveau] pour le nombre total de matériaux (x protoMat pour un Prototype) ; tops = nombre de meilleures bases tirées au sort.
    modMax : niveau maximum de chaque module de planque (au plus le niveau de la planque) ; modHaut : coût x par niveau au-delà du 5e. */
-const ECO={vente:[1,1,1,.8,.35,.25],niv:[6,10],haut:.15,achat:[[1,1],[16,1],[26,3],[30,3],[40,1.5]],kopAb:{lenine:1,ligne2:1,iode:1,kova:1,aurora:1},luxe:{from:12,prix:[[12,40000],[26,150000],[40,250000]]},modMax:{inf:7,labo:7,arm:5,ant:5,gen:5},modHaut:1.6,forge:{prix:[[1,150],[6,600],[12,3000],[16,6000],[26,25000],[36,40000],[40,45000]],proto:2.5,mat:[5,.5],protoMat:2,tops:3,relX:1.25,fuseX:2,relLv:31}};
+const ECO={vr:[.4,1,2.2,4.5,9,18],vk:5,vn:[[1,150],[6,600],[12,3000],[16,5000],[26,10000],[36,14000],[40,16000]],niv:[6,10],achat:[[1,1],[16,1],[26,3],[30,3],[40,1.5]],kopAb:{lenine:1,ligne2:1,iode:1,kova:1,aurora:1},luxe:{from:12,prix:[[12,40000],[26,150000],[40,250000]]},modMax:{inf:7,labo:7,arm:5,ant:5,gen:5},modHaut:1.6,forge:{prix:[[1,150],[6,600],[12,3000],[16,6000],[26,25000],[36,40000],[40,45000]],proto:2.5,mat:[5,.5],protoMat:2,tops:3,relX:1.25,fuseX:2,relLv:31}};
 /* Forge : type de pièce, libellé, répartition des matériaux (parts du total). Les armes suivent la compétence (sk), les armures l'emplacement (s). */
 const FORGE=[['melee','Arme de mêlée','w',{ferraille:.5,ressorts:.5}],['legeres','Arme légère','w',{ferraille:.4,ressorts:.4,chimie:.2}],['lourdes','Arme lourde','w',{ferraille:.6,ressorts:.4}],['energie','Arme à énergie','w',{electro:.5,chimie:.25,ressorts:.25}],['head','Casque','a',{ferraille:.5,tissu:.5}],['body','Armure de corps','a',{tissu:.5,cuirb:.3,ferraille:.2}],['hands','Gants','a',{tissu:.5,cuirb:.5}],['feet','Bottes','a',{cuirb:.5,ferraille:.5}],['acc','Accessoire','a',{electro:.4,ressorts:.3,chimie:.3}]];
 function ecoLerp(T,x){if(x<=T[0][0])return T[0][1];for(let i=1;i<T.length;i++)if(x<=T[i][0])return T[i-1][1]+(T[i][1]-T[i-1][1])*(x-T[i-1][0])/(T[i][0]-T[i-1][0]);return T[T.length-1][1]}
@@ -2642,11 +2650,13 @@ const FGRUN=['Le Fourgueur file par une bouche d’aération avec son colis. Un 
 const FGTAUNT=['« Signe ici, camarade ! » Il ne te tend rien.','Le Fourgueur compte ses kopeks en courant.','Le Fourgueur serre son colis comme un nouveau-né.'];
 function colisN(){let n=0;for(const x of S.inv)if(B[x.b]&&B[x.b].colis)n+=x.q||1;return n}
 function colisRoll(kind){const L=Math.min(LVMAX,S.lvl||1);
- // avant le niveau 7, surtout du Modifié (journal #43 : « beaucoup de bleu pour une première descente ») : le Prototype suit sa porte de niveau (rarGate), au moins 30 % de son poids ;
- // le Légendaire n'a son plancher qu'à partir du niveau 7. Niveau 1 : Modifié 77 %, Prototype 23 % ; niveau 3 : 72 / 27 % ; niveau 7 et plus : Prototype ou mieux.
- const g3=rarGate(3),g4=rarGate(4);/* v0.70.0 (audit G1) : Colis doré = Légendaire à partir du niveau 12 (Hôpital) ; avant, un Prototype garanti */const r=kind===2?(L>=12?4:3):wpick([[2,70*(1-g3)],[3,70*Math.max(.3,g3)],[4,25*Math.max(L>=7?.3:0,g4)],[5,L>=24?4*rarGate(5):0]].filter(p=>p[1]>0));
- const cat=r>=4?wpick([['w',50],['a',50]]):wpick([['w',40],['a',45],['x',15]]);/* un Légendaire de Colis porte toujours un effet visible : arme ou armure */const base=(cat==='w'?GEAR_W:cat==='a'?GEAR_A:GEAR_X).filter(k=>B[k].ml<=L+1&&!B[k].zone&&!B[k].fac);
- const near=base.filter(k=>B[k].ml>=L-6);const it=mkGear(pick(near.length?near:base),L,r);
+ /* v0.77.0 (chantier butin, validé par le joueur) : Colis normal = bleu 80 / violet 20 avant le niveau 6, 40 / 60 de 6 à 11, violet 70 / Légendaire 30 de 12 à 21,
+    puis violet 35 / Légendaire 60 / Relique 5 (Relique dès le niveau 28). Colis doré : Prototype avant le niveau 12, Légendaire ensuite.
+    L'objet est au niveau du joueur + 1 et pris parmi les types les plus récents de l'emplacement (le tiers du haut) : il bat presque toujours une pièce d'étage de la rareté du dessous. */
+ const r=kind===2?(L>=12?4:3):L<6?wpick([[2,80],[3,20]]):L<12?wpick([[2,40],[3,60]]):L<22?wpick([[3,70],[4,30]]):wpick([[3,35],[4,60],[5,L>=28?5:0]].filter(p=>p[1]>0));
+ const lv=Math.min(LVMAX,L+1);
+ const cat=r>=4?wpick([['w',50],['a',50]]):wpick([['w',40],['a',45],['x',15]]);/* un Légendaire de Colis porte toujours un effet visible : arme ou armure */const base=(cat==='w'?GEAR_W:cat==='a'?GEAR_A:GEAR_X).filter(k=>B[k].ml<=lv&&!B[k].zone&&!B[k].fac);
+ const top=base.slice().sort((x,y)=>B[y].ml-B[x].ml||B[y].p-B[x].p).slice(0,Math.max(3,Math.ceil(base.length/3)));const it=mkGear(pick(top.length?top:base),lv,r);
  if(r>=4){const up=COLIS_UQ.filter(id=>affOk(UNIQI[id].on,B[it.b]));if(up.length)it.uq=pick(up)}
  return it}
 function colisOpen(id){if(S.run)return toast('Un Colis ne s’ouvre qu’à la surface. Remonte vivant avec.');
@@ -3059,7 +3069,7 @@ function victory(){
   if(e.add||(e.hp>0&&!e.fled)||(EN[e.id].fg&&e.hp>0))continue;const fh=e.hp>0&&!e.tk?.5:1;const d=EN[e.id];const mult=d.boss?5:e.nem&&e.hp<=0?5:e.el?3:1;xp+=Math.round(10*e.lv*mult*fh);
   if(d.kop)kop+=Math.round((d.boss?ri(d.kop[0],d.kop[1]):ri(d.kop[0],d.kop[1])*e.lv)*fh);
   if(d.boss&&!(S.st.bkd&&S.st.bkd[run.ab])){items.push(mkStack('colisd',1));log('Sous le cadavre du boss, un colis doré. La Coopérative a des fournisseurs partout.','crit')}
-  if(d.boss){const n=ri(2,3)+(pal('CHC')>=2?1:0);{const rl=abri().rel||0;items.push(mkGear(pick(GEAR_W.filter(k=>(B[k].ml<=5&&!B[k].zone)||B[k].zone===S.run.ab)),ilvl(),rl&&chance(Math.min(.3,.06*rl))?5:rollRar({e:e0,min:3,mult:2})))}for(let i=1;i<n;i++)items.push(randomLoot(ilvl(),{e:e0,min:1,gear:i===1}))}
+  if(d.boss){const n=ri(2,3)+(pal('CHC')>=2?1:0);{const rl=abri().rel||0;items.push(mkGear(pick(GEAR_W.filter(k=>(B[k].ml<=5&&!B[k].zone)||B[k].zone===S.run.ab)),ilvl(),rl&&chance(Math.min(.3,.06*rl))?5:rollRar({e:e0,min:3,mult:2,boss:1})))}for(let i=1;i<n;i++)items.push(randomLoot(ilvl(),{e:e0,min:1,gear:i===1}))}
   else if(e.el){if(pactsOn())run.pactQ=1;/* v0.17.2 : un élite lâche toujours une pièce d'équipement au moins Modifié (avant : 87 % de Standard au Parking), et un 2e objet une fois sur deux (EQ.elGear) */items.push(randomLoot(ilvl(),{e:e0,min:2,gear:true,rel:2}));if(chance(EQ.elGear))items.push(randomLoot(ilvl(),{e:e0,min:1}));if(hasPerk('chefpill'))items.push(randomLoot(ilvl(),{e:e0,min:2}))}
   else if(chance(.22+(bo.dropPct||0)/100+(facLv('charo')>=2?.25:0)))items.push(randomLoot(ilvl(),{e:e0}));
   if(bo.u_contre)items.push(randomLoot(ilvl(),{e:e0}));
@@ -4456,7 +4466,7 @@ function wsPanel(it){const b=B[it.b],w=b.t==='w',top=wsTop(),up=it.up||0;const b
  ${w?btn('wcal',`Visée sur ${top}`,wsCalCost(it),hitAttr(b,it)!==top,hitAttr(b,it)===top?'déjà fait':null):''}</div></div>`}
 function forgeLv(){return Math.min(Math.max(1,S.lvl||1),LVMAX)}
 // v0.13.0 : le Prototype forgé arrive avec le niveau où il tombe à plein poids (EQ.rarLv[3]).
-function forgeProto(){return (S.lvl||1)>=EQ.rarLv[3]}
+function forgeProto(){return (S.lvl||1)>=FORGE_PROTO}const FORGE_PROTO=9;/* v0.77.0 : la forge du Prototype reste au niveau 9 (EQ.rarLv[3] passe à 12) */
 // v0.15.0 : fusions de Gleb. Légendaire (r=4) après le boss de l'Hôpital : deux Prototypes du sac ; Relique (r=5) après le boss de la Station : deux Légendaires dont un d'Aurora-4 (niveau ECO.forge.relLv ou plus).
 function forgeOk(r){return r===2||(r===3&&forgeProto())||(r===4&&!!bkFix().iode)||(r===5&&!!bkFix().kova)}
 function forgeRar(){const r=Math.min(5,Math.max(2,+UI.forgeR||2));return forgeOk(r)?r:2}
@@ -4982,7 +4992,7 @@ function selfTest(){const keep=JSON.stringify(S),ui={tab:UI.tab,modal:UI.modal,c
    const fp=freq('lenine'),fi=freq('iode'),fk=freq('kova',0,150000);
    ck('Relique : jamais au Parking, extrêmement rare à l’Hôpital, possible à la Station',fp===0&&fi<.005&&fk>.002&&fk<.05&&fk>fi*3,[fp,fi,fk]);
    const fv=freq('kova',1,150000);ck('Relique : plus de chances dans un bassin inondé',fv>fk*1.2,[fv,fk]);
-   ck('Relique : valeur de revente et démontage prévus',MINP.length===6&&wsNAff(5)===4&&sellPrice(w)>sellPrice(w4))});
+   ck('Relique : valeur de revente et démontage prévus',ECO.vr.length===6&&wsNAff(5)===4&&sellPrice(w)>sellPrice(w4))});
   // Station d'épuration n°3 (v0.12.19) : vannes, curage, événements
   t('Station d’épuration (vannes et curage)',()=>{fresh();startRun('lenine');S.run=null;S.st.bk={lenine:1,ligne2:1,iode:1};S.en=900;S.hp=hpMax();
    const A=ABRIS.find(x=>x.id==='kova');ck('Station : fiche de l’abri (vanne, nom, montée)',A.vanne===1&&A.up===1&&A.n.includes('épuration')&&!JSON.stringify(A).includes('Kovalenko'));
@@ -5002,7 +5012,7 @@ function selfTest(){const keep=JSON.stringify(S),ui={tab:UI.tab,modal:UI.modal,c
    S.eq.acc1=null;dirty();S.run=null});
   // Centrale Aurora-4 (v0.12.24) : surchauffe, bouton rouge, casier plombé, événements, pièges
   t('Centrale Aurora-4 (surchauffe, bouton rouge, casier)',()=>{fresh();startRun('lenine');S.run=null;S.st.bk={lenine:1,ligne2:1,iode:1,kova:1};S.en=900;S.lvl=36;S.hp=hpMax();
-   const A=ABRIS.find(x=>x.id==='aurora');ck('Aurora : fiche de l’abri (surchauffe, Reliques fréquentes)',A.surch===1&&A.rel>=1.5&&A.rel<=2.5);
+   const A=ABRIS.find(x=>x.id==='aurora');ck('Aurora : fiche de l’abri (surchauffe, Reliques ; v0.77.0 : rel 0,7)',A.surch===1&&A.rel>=.5&&A.rel<=1);
    const ev=EVENTS.filter(e=>e.ab==='aurora').map(e=>e.id).sort().join(',');ck('Aurora : huit événements propres (quatre nouveaux, dont le chat)',ev==='barre,bassin,cantine,chat,douche,pastilles,pupitre,vestiaire',ev);
    ck('Aurora : chaque issue d’événement et de casier existe',EVENTS.filter(e=>e.ab==='aurora').every(e=>e.o.every(o=>(!o.go||EVH[o.go])&&(!o.ok||EVH[o.ok])&&(!o.ko||EVH[o.ko])))&&['cas_ok','cas_ko','cas_sur'].every(k=>EVH[k]));
    ck('Aurora : pièges de centrale (plus de pièges d’appartement)',TRAPS4.map(x=>x.id).sort().join(',')==='primaire,vapeur'&&!JSON.stringify(TRAPS4).includes('ordures'));
@@ -5102,7 +5112,8 @@ function selfTest(){const keep=JSON.stringify(S),ui={tab:UI.tab,modal:UI.modal,c
   t('économie',()=>{fresh();
    S.lvl=6;ck('éco : prix au niveau 6 inchangés',ecoNiv()===1&&consPrice('trousse')===buyPrice(SHOP_P.trousse),[ecoNiv()]);
    S.lvl=36;ck('éco : prix x4 au niveau 36',Math.abs(ecoNiv()-4)<1e-9,ecoNiv());
-   const g=mkGear('combil',30,4);g.c=1;const v=ECO.vente;ECO.vente=[1,1,1,1,1,1];const s1=sellPrice(g);ECO.vente=v;ck('éco : la revente d\'un Légendaire suit ECO.vente',sellPrice(g)<=Math.round(s1*ECO.vente[4])+1&&sellPrice(g)>=Math.round(s1*ECO.vente[4])-1,[sellPrice(g),s1]);
+   {let bad=[];for(const L of [2,8,16,26,40])for(let r=1;r<6;r++){const lo=mkGear('combil',L,r-1,1),hi=mkGear('tuyau',L,r,1);if(sellPrice(hi)<=sellPrice(lo))bad.push(L+':'+r)}ck('éco v0.77.0 : une rareté se vend toujours plus cher que celle du dessous (type le moins cher contre le plus cher)',!bad.length,bad)}
+   {const k=S.run;startRun('lenine');const o=rnd;rnd=()=>.001;const r1=bolUp(2);rnd=o;const n=0;let hi=0;for(let i=0;i<300;i++)if(rollRar({min:2})<2)hi++;ck('butin v0.77.0 : Coup de bol (+1 rareté) et garanties du Parking abaissées à Standard',r1===3&&hi>0,[r1,hi]);S.run=null;if(k)S.run=k}
    const a30=mkGear('combil',30,3),a40=mkGear('combil',40,3);ck('éco : la valeur monte encore de 30 à 40',itemValue(a40)>itemValue(a30)*1.3,[itemValue(a30),itemValue(a40)]);
    S.kop=1e6;S.hp=1;S.lvl=36;const k0=S.kop;clinicHeal();ck('éco : la clinique coûte 4 kopeks par PV au niveau 36',k0-S.kop===Math.ceil((S.hp-1)*4)&&S.hp>1,[k0-S.kop,S.hp]);
    S.shop=null;S.lvl=20;const sh=shopFresh();const lx=sh.g.filter(x=>x.lux);ck('éco : un seul lot de luxe Légendaire à partir du niveau '+ECO.luxe.from,lx.length===1&&lx[0].r===4&&etalPrice(lx[0])===Math.round(ecoLerp(ECO.luxe.prix,lx[0].l)*facBuyM()),lx.map(x=>[x.r,etalPrice(x)]));
@@ -5276,8 +5287,8 @@ function selfTest(){const keep=JSON.stringify(S),ui={tab:UI.tab,modal:UI.modal,c
    // factions : mission terminée = pastille sur l’onglet
    S.st.allv=1;S.st.vseen={};for(const v of VTABS)S.st.vseen[v[0]]=1;const F0=FACS.find(F=>fmOpen(F.id)&&fmCur(F.id).k!=='give');if(F0){const h0=vVille().replace(/\n/g,' ');fmS(F0.id).ok=1;const h1=vVille().replace(/\n/g,' '),i=h1.indexOf('data-v="factions"');ck('pastille Factions : éteinte sans mission, allumée avec une mission à rendre',!/data-v="factions"[^>]*>(?:(?!<\/button>).)*dot2/.test(h0)&&fmAny()&&/data-v="factions"[^>]*>(?:(?!<\/button>).)*dot2/.test(h1),[fmAny()]);fmS(F0.id).ok=0}
    // butin : un élite lâche toujours une pièce d’équipement au moins Modifiée ; un coffre ouvert aussi
-   let bad=0;for(let i=0;i<40;i++){startRun('lenine');if(!S.run)break;const r=S.run;r.e=1;r.bag.length=0;const k=mkEnemy('rat',3,true);startCombat([k]);k.hp=0;victory();if(!r.bag.some(it=>!isStack(it)&&it.r>=2))bad++;r.bag.length=0;r.sc='map';EVH.cof_ok();if(!r.bag.some(it=>!isStack(it)&&it.r>=2))bad++;S.run=null;S.en=200}
-   ck('butin : 40 élites et 40 coffres, toujours une pièce au moins Modifiée',bad===0,bad)});
+   let bad=0;for(let i=0;i<40;i++){startRun('lenine');if(!S.run)break;const r=S.run;const L2=i%2;if(L2)r.ab='ligne2';const mr=L2?2:1;r.e=1;r.bag.length=0;const k=mkEnemy('rat',3,true);startCombat([k]);k.hp=0;victory();if(!r.bag.some(it=>!isStack(it)&&it.r>=mr))bad++;r.bag.length=0;r.sc='map';EVH.cof_ok();if(!r.bag.some(it=>!isStack(it)&&it.r>=mr))bad++;S.run=null;S.en=200}
+   ck('butin : 40 élites et 40 coffres, toujours une pièce au moins Standard au Parking, au moins Modifiée ensuite (v0.77.0)',bad===0,bad)});
   t('sauvegarde v11 -> v12 : refonte des attributs (v0.47.0)',()=>{fresh();const d=JSON.parse(JSON.stringify(S));d.v=11;d.lvl=20;d.at={FOR:14,END:16,PER:10,AGI:20,INT:10,CHA:10,CHC:12};d.ap=3;d.eq.main.a=[{id:'ren',v:{AGI:4}},{id:'pv',v:{hp:10}}];d.inv=[Object.assign(JSON.parse(JSON.stringify(d.eq.main)),{a:[{id:'tre',v:{CHC:3}}]})];const m=migrate(d);
    ck('sauvegarde v11 : attributs remis à 5, points rendus, affixes divisés par 2',m.v===SAVE_VER&&Object.values(m.at).every(v=>v===5)&&m.ap===AT_PTS+atLvPts(20)&&m.ap===10&&m.st.respec===1&&m.eq.main.a[0].v.AGI===2&&m.eq.main.a[1].v.hp===10&&m.inv[0].a[0].v.CHC===2,[m.ap,m.eq.main.a,m.inv[0].a]);
    S=m;dirty();UI.tab='perso';UI.ptab='stats';const h=vPerso0();ck('sauvegarde v11 : message de redistribution dans Perso',/Refonte des attributs/.test(h),0);UI.atp={};S.ap=1;ACT.atplus('AGI');ACT.atval();ck('redistribution : le message disparaît une fois les points validés',!S.ap&&!S.st.respec,[S.ap,S.st.respec]);
@@ -5401,7 +5412,7 @@ function selfTest(){const keep=JSON.stringify(S),ui={tab:UI.tab,modal:UI.modal,c
    ck('Pactes : Ligne 2, Hôpital et Station',['ligne2','iode','kova'].every(id=>ABRIS.find(a=>a.id===id).pacts),0);
    ck('Pactes : pas au Parking ni à Aurora',!ABRIS.find(a=>a.id==='lenine').pacts&&!ABRIS.find(a=>a.id==='aurora').pacts,0)});
   t('Colis, Fourgueur, rat, défis (v0.20.0)',()=>{fresh();S.st.bk={lenine:1};S.en=900;S.lvl=10;S.st.runs=3;dirty();
-   addTo(S.inv,mkStack('colis',1));colisOpen('colis');const c1=UI.colis&&findItem(UI.colis.u);ck('colis : s’ouvre à la surface, au moins Prototype dès le niveau 7, à ton niveau',!!c1&&c1.it.r>=3&&c1.it.l===10&&UI.modal==='colis',c1&&[c1.it.r,c1.it.l]);
+   addTo(S.inv,mkStack('colis',1));colisOpen('colis');const c1=UI.colis&&findItem(UI.colis.u);ck('colis : s’ouvre à la surface, au moins Modifié, à ton niveau + 1 (v0.77.0)',!!c1&&c1.it.r>=2&&c1.it.l===11&&UI.modal==='colis',c1&&[c1.it.r,c1.it.l]);
    ck('colis : l’écran d’ouverture s’affiche',/colbox/.test(colisModal()),0);UI.modal=null;UI.colis=null;
    const lv0=S.lvl;S.lvl=5;ck('colis doré avant le niveau 12 : Prototype garanti (v0.70.0)',colisRoll(2).r===3);S.lvl=12;addTo(S.inv,mkStack('colisd',1));colisOpen('colisd');const c2=findItem(UI.colis.u).it;ck('colis doré : Légendaire avec un effet visible',c2.r===4&&COLIS_UQ.includes(c2.uq),[c2.r,c2.uq]);{let bad=0;for(let i=0;i<40;i++){const x=colisRoll(2);if(!COLIS_UQ.includes(x.uq))bad++}ck('colis doré : toujours un effet visible (40 tirages)',bad===0,bad)}S.lvl=lv0;UI.modal=null;UI.colis=null;
    startRun('lenine');addTo(S.run.bag,mkStack('colis',1));const n0=countOf('colis');useItem('colis');ck('colis : ne s’ouvre pas pendant la descente',countOf('colis')===n0,0);
