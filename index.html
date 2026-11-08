@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Endzone 2141 v0.76.1</title>
+<title>Endzone 2141 v0.76.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
@@ -48,6 +48,7 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:rgb
 .who{font-size:13px;color:var(--mute)}
 .hright{display:flex;align-items:center;gap:8px}
 .kop{display:inline-flex;align-items:center;gap:5px;font-family:"Barlow Condensed",sans-serif;font-size:18px;font-weight:600;color:var(--amber)}
+.hbtn,.node,.bigic{padding:0;place-items:unsafe center}/*v0.76.2 : le bouton « ? » avait le remplissage par défaut des boutons (6 px de chaque côté) : l'icône, plus large que ce qui restait, se collait à gauche et dépassait de 3 px à droite ; padding 0 et centrage « unsafe » pour tous les ronds à icône*/
 .hbtn{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:var(--panel2);display:grid;place-items:center;cursor:pointer;color:var(--violet)}
 .bars{display:grid;grid-template-columns:1fr 1fr 46px;gap:10px;margin-top:4px;align-items:start}
 .sl{font-size:12.5px;color:var(--mute);display:flex;align-items:center;gap:4px;white-space:nowrap}
@@ -145,7 +146,8 @@ main{padding:14px}
 .scene.sm[data-r]{height:104px}
 .scene[data-r] .cofw{position:relative;z-index:2;margin:0;height:140px}
 .rbar.tall[data-r]{min-height:150px;display:flex;flex-direction:column;justify-content:space-between}.rbar.tall[data-r]::after{background:linear-gradient(180deg,rgba(10,6,18,.6),rgba(10,6,18,0) 38%,rgba(10,6,18,0) 58%,rgba(10,6,18,.65))}
-.ccard.safe{--rc:var(--good)}.ccard.risk{--rc:var(--pink)}.ccard:has(.rb){padding:0 0 12px;overflow:hidden}.ccard .rb{align-self:stretch;height:84px;background:var(--rd) center/cover;border-bottom:2px solid var(--rc);margin-bottom:20px;position:relative}.ccard .rb .pc{position:absolute;left:50%;bottom:-17px;transform:translateX(-50%);width:36px;height:36px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--rc);background:var(--bg)}.ccard:has(.rb)>:not(.rb){margin-left:10px;margin-right:10px}
+.ccard.safe{--rc:var(--good)}.ccard.risk{--rc:var(--pink)}.ccard:has(.rb){padding:0 0 12px;overflow:hidden}.ccard .rb{align-self:stretch;height:84px;background:var(--rd) center/cover;border-bottom:2px solid var(--rc);margin-bottom:20px;position:relative}.ccard .rb .pc,.rcard .rb .pc{display:flex!important;align-items:center;justify-content:center}.ccard .rb .pc>svg,.rcard .rb .pc>svg{width:82%!important;height:82%!important;flex:none;display:block}/*v0.76.2 : l'icône du rond est centrée (elle débordait de 6 px à droite)*/
+.ccard .rb .pc{position:absolute;left:50%;bottom:-17px;transform:translateX(-50%);width:36px;height:36px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--rc);background:var(--bg)}.ccard:has(.rb)>:not(.rb){margin-left:10px;margin-right:10px}
 /*FIN SCENES*/
 .rcard:has(.rb){padding:0 0 12px;overflow:hidden}.rcard .rb{align-self:stretch;height:50px;background:var(--rd) center/cover;border-bottom:2px solid var(--rc);margin-bottom:18px;position:relative}.rcard .rb .pc{position:absolute;left:50%;bottom:-17px;transform:translateX(-50%);width:36px;height:36px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--rc);background:var(--bg);color:var(--rc);box-shadow:0 0 10px color-mix(in srgb,var(--rc) 55%,transparent)}.rcard:has(.rb)>:not(.rb){margin-left:8px;margin-right:8px}
 .rcard.terminal{--rc:var(--cyan)}.rcard.piege{--rc:var(--blood)}.rcard.event{--rc:var(--violet)}
@@ -633,7 +635,7 @@ nav .dot{position:absolute;top:5px;left:calc(50% + 7px);width:9px;height:9px;bor
 .rbar.wc,.rbar.wc.tall,.rbar.wc.tall[data-r]{height:auto;min-height:92px;padding-bottom:7px}
 /*FIN GRANDS SPRITES*/
 /*COLONNES v0.60.0 : chaque créature en grand au-dessus de sa carte (1 à 4 ennemis sans boss ni Némésis), journal de 4 lignes*/
-.logbox.run .log{max-height:89px!important}
+.logbox.run .log{max-height:130px!important}   /* v0.76.2 (demande du joueur) : 6 lignes de journal (21 px la ligne + 4) au lieu de 4 ; en combat 7 lignes au plus (LOG_MAX) */
 #zwrap .enemies.eg{display:grid!important;gap:6px;align-items:end;grid-template-columns:repeat(var(--egc),minmax(0,1fr))}
 .enemies.eg1{--egc:1}.enemies.eg2,.enemies.eg4{--egc:2}.enemies.eg3{--egc:3}
 #zwrap .enemies.eg .enemy{display:flex!important;flex-direction:column;align-items:stretch;position:relative;padding:0 2px!important;margin:0;min-width:0;gap:0}
@@ -880,7 +882,7 @@ nav .dot{position:absolute;top:5px;left:calc(50% + 7px);width:9px;height:9px;bor
  Fin du fichier : démarrage (load, awayCheck) puis render().
 ============================================================================ */
 'use strict';
-const VERSION='0.76.1';
+const VERSION='0.76.2';
 // Niveau maximum du personnage (v0.12.12, décision du joueur du 24/10/2026 : 40, atteint en environ 10 h sans auto-combat ; extensible). Tranches des abris : voir ABRIS (lv, lvl) et docs/GDD.md.
 const LVMAX=40;
 // Dégâts minimum d'un coup ennemi, en part du coup brut (v0.12.13, décision liée au journal #8 du joueur) : l'armure et la réduction fixe ne peuvent plus ramener un coup à 1 PV. Ne touche pas les persos peu armés.
@@ -3678,10 +3680,13 @@ function abTint(){return S&&S.run&&UI.tab==='zone'?S.run.ab:''}
 /*v0.60.0 : ÉCRAN DE COMBAT AJUSTÉ. Le panneau d'attaque finit juste au-dessus de la barre du bas, le titre « Objets » dépasse de FIT_PEEK px ;
  la place en trop agrandit les créatures (plafonnées par la largeur), le manque les rétrécit puis raccourcit le journal. Mesuré à chaque render et au redimensionnement.*/
 const FIT_PEEK=30;
+/* v0.76.2 (règle du joueur) : le journal de combat a une hauteur FIXE, décidée au début du combat d'après le nombre d'ennemis : 1 ou 2 ennemis = 7 lignes, 3 ou plus = 6 lignes (21 px la ligne + 4). Il ne bouge ni quand on ferme le tutoriel ou une bulle, ni quand un ennemi meurt, ni quand un renfort arrive ; seul un écran trop petit le raccourcit (en dernier recours, après les créatures). */
+function logLines(cb){if(cb.jl==null)cb.jl=cb.en.length<=2?7:6;return cb.jl}
 /*v0.74.1 : NOMS COUPÉS. Le nom d'un monstre rétrécit (jusqu'à 10 px) avant d'être coupé ; seulement si 10 px ne suffisent pas, il passe sur deux lignes (classe nm2).*/
 function fitNames(){try{const r=document.createRange();document.querySelectorAll('#view .enemies .enemy .hrow b').forEach(b=>{b.style.removeProperty('font-size');b.classList.remove('nm2');const ov=()=>{r.selectNodeContents(b);return r.getBoundingClientRect().width>b.getBoundingClientRect().width+.05};let fs=parseFloat(getComputedStyle(b).fontSize);while(ov()&&fs>10){fs-=.5;b.style.fontSize=fs+'px'}if(ov())b.classList.add('nm2')})}catch(e){}}
 function fitCombat(){try{const z=document.getElementById('zwrap'),n=document.querySelector('nav'),a=document.querySelector('#view .card.me .acts');if(!z||!n||!a||!S.run||!S.run.cb||UI.tab!=='zone')return;
  const e=z.querySelector('.enemies');if(!e)return;const k=n.offsetHeight/(n.getBoundingClientRect().height||1);
+ const lg=z.querySelector('.logbox.run .log'),LH=logLines(S.run.cb)*21+4;if(lg)['height','min-height','max-height'].forEach(q=>lg.style.setProperty(q,LH+'px','important'));
  const gap=()=>(n.getBoundingClientRect().top-a.getBoundingClientRect().bottom)*k-FIT_PEEK;
  for(let it=0;it<3&&Math.abs(gap())>2;it++){
  if(e.classList.contains('eg')){const cs=getComputedStyle(e),cols=+cs.getPropertyValue('--egc')||1,rows=e.classList.contains('eg4')?2:1;
@@ -3694,9 +3699,8 @@ function fitCombat(){try{const z=document.getElementById('zwrap'),n=document.que
  else if(e.classList.contains('eg')){const egb=e.classList.contains('egb'),h=parseFloat(e.style.getPropertyValue('--egh'))||parseFloat(getComputedStyle(e).getPropertyValue('--egh'))||100;
   let m=0;e.querySelectorAll('.enemy').forEach(en=>{const i=en.querySelector('img.spr');if(!i)return;const b=en.classList.contains('boss')||en.classList.contains('nem');m=Math.max(m,i.offsetHeight/(egb&&b?1.3:1))});
   if(m>20&&m<h-3){e.style.setProperty('--egh',(m+2)+'px');e.style.setProperty('--egs',(m+2)+'px')}}
- const g=gap(),l=z.querySelector('.logbox.run .log');
- if(l&&g<0){if(l.offsetHeight>40)l.style.setProperty('max-height',Math.max(40,Math.floor((l.offsetHeight+g-4)/21)*21+4)+'px','important')}
- else if(l&&g>6){const H=l.offsetHeight+g;l.style.setProperty('max-height','none','important');l.style.setProperty('height',H+'px','important')}
+ const g=gap(),l=lg;
+ if(l&&g<0&&l.offsetHeight>40){const H2=Math.max(40,Math.floor((l.offsetHeight+g-4)/21)*21+4);['height','min-height','max-height'].forEach(q=>l.style.setProperty(q,H2+'px','important'))}   // écran trop petit : le journal raccourcit en dernier recours ; jamais il ne grandit
 }catch(err){}}
 let fitT=0;function fitLater(){clearTimeout(fitT);fitT=setTimeout(()=>{const z=document.getElementById('zwrap');if(z){z.querySelectorAll('.enemies').forEach(e=>{e.style.removeProperty('--egh');e.style.removeProperty('--egs')});const l=z.querySelector('.logbox.run .log');if(l){l.style.removeProperty('height');l.style.removeProperty('max-height')}}fitNames();fitCombat()},30)}
 addEventListener('resize',()=>{try{fitLater()}catch(e){}});
