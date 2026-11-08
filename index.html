@@ -3,7 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Endzone 2141 v0.77.0</title>
+<title>Endzone 2141 v0.77.1</title>
+<!--APERCU DU LIEN v0.77.1 : carte affichée par Discord, WhatsApp, Messenger quand on partage le lien (image apercu.jpg à côté de index.html dans Endzone2141-jeu, fabriquée par tools/apercu_lien.py)-->
+<meta name="description" content="Descends dans les abris irradiés de Vivograd, loote, remonte vivant. RPG post-apo à l'humour noir, gratuit, sur téléphone, sans installation.">
+<meta name="theme-color" content="#ff3d8b">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="Endzone 2141">
+<meta property="og:title" content="Endzone 2141 — survivre sous Vivograd">
+<meta property="og:description" content="Descends dans les abris irradiés de Vivograd, loote, remonte vivant. RPG post-apo à l'humour noir, gratuit, sur téléphone, sans installation.">
+<meta property="og:url" content="https://louhaou.github.io/Endzone2141-jeu/">
+<meta property="og:image" content="https://louhaou.github.io/Endzone2141-jeu/apercu.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Endzone 2141 : la ville de Vivograd vue de haut, avec ses abris irradiés">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Endzone 2141 — survivre sous Vivograd">
+<meta name="twitter:description" content="Descends dans les abris irradiés de Vivograd, loote, remonte vivant. RPG post-apo à l'humour noir, gratuit, sur téléphone, sans installation.">
+<meta name="twitter:image" content="https://louhaou.github.io/Endzone2141-jeu/apercu.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
@@ -884,7 +901,7 @@ nav .dot{position:absolute;top:5px;left:calc(50% + 7px);width:9px;height:9px;bor
  Fin du fichier : démarrage (load, awayCheck) puis render().
 ============================================================================ */
 'use strict';
-const VERSION='0.77.0';
+const VERSION='0.77.1';
 // Niveau maximum du personnage (v0.12.12, décision du joueur du 24/10/2026 : 40, atteint en environ 10 h sans auto-combat ; extensible). Tranches des abris : voir ABRIS (lv, lvl) et docs/GDD.md.
 const LVMAX=40;
 // Dégâts minimum d'un coup ennemi, en part du coup brut (v0.12.13, décision liée au journal #8 du joueur) : l'armure et la réduction fixe ne peuvent plus ramener un coup à 1 PV. Ne touche pas les persos peu armés.
