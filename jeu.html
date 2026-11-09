@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Endzone 2141 v0.77.1</title>
+<title>Endzone 2141 v0.77.2</title>
 <!--APERCU DU LIEN v0.77.1 : carte affichée par Discord, WhatsApp, Messenger quand on partage le lien (image apercu.jpg à côté de index.html dans Endzone2141-jeu, fabriquée par tools/apercu_lien.py)-->
 <meta name="description" content="Descends dans les abris irradiés de Vivograd, loote, remonte vivant. RPG post-apo à l'humour noir, gratuit, sur téléphone, sans installation.">
 <meta name="theme-color" content="#ff3d8b">
@@ -901,7 +901,7 @@ nav .dot{position:absolute;top:5px;left:calc(50% + 7px);width:9px;height:9px;bor
  Fin du fichier : démarrage (load, awayCheck) puis render().
 ============================================================================ */
 'use strict';
-const VERSION='0.77.1';
+const VERSION='0.77.2';
 // Niveau maximum du personnage (v0.12.12, décision du joueur du 24/10/2026 : 40, atteint en environ 10 h sans auto-combat ; extensible). Tranches des abris : voir ABRIS (lv, lvl) et docs/GDD.md.
 const LVMAX=40;
 // Dégâts minimum d'un coup ennemi, en part du coup brut (v0.12.13, décision liée au journal #8 du joueur) : l'armure et la réduction fixe ne peuvent plus ramener un coup à 1 PV. Ne touche pas les persos peu armés.
@@ -4233,9 +4233,11 @@ function vBest(){
  let h='';const all=Object.keys(EN).filter(k=>BEST[k]);const seen=all.filter(bestSeen).length;
  h+=`<div class="secth"><h3>Bestiaire de Vivograd</h3><span class="small muted">${seen}/${all.length}</span></div>`;
  if(seen<3)h+=hint('Chaque créature tuée remplit sa fiche. 5 victimes révèlent ses statistiques, 15 ses habitudes, et 30 te donnent +10 % de dégâts contre elle (moins pour les boss).');
- for(const ab of ABRIS.filter(a=>a.pools)){
-  const ids=[...new Set([...ab.pools.flat(),ab.boss])].filter(k=>BEST[k]);
-  h+=`<div class="secth"><h3 style="font-size:16px">${ab.n}</h3></div><div class="list compact">${ids.map(id=>{const sn=bestSeen(id),t=bestTier(id),k=bestKills(id);
+ /* v0.77.2 : les créatures hors des listes d'abri (Fourgueur, Gleb possédé) ont leur section « Rencontres de passage », une fois croisées : sinon leur pastille restait allumée sur l'onglet sans fiche à ouvrir */
+ const shown=new Set(),secs=ABRIS.filter(a=>a.pools).map(ab=>{const ids=[...new Set([...ab.pools.flat(),ab.boss])].filter(k=>BEST[k]);ids.forEach(k=>shown.add(k));return [ab.n,ids]});
+ const extra=all.filter(k=>!shown.has(k)&&bestSeen(k));if(extra.length)secs.push(['Rencontres de passage',extra]);
+ for(const [titre,ids] of secs){
+  h+=`<div class="secth"><h3 style="font-size:16px">${titre}</h3></div><div class="list compact">${ids.map(id=>{const sn=bestSeen(id),t=bestTier(id),k=bestKills(id);
    return `<button class="row ${sn?'':'off'}" data-a="beast" data-v="${id}"><div class="tile ${SPR[id]?'spt':''} ${SPR[id]&&!sn?'unk':''}">${SPR[id]?spr(id):ic(ENICON[id]||'skull',20)}${sn&&cxdNew('e:'+id,t+1)?'<i class="nwd"></i>':''}</div><div class="grow"><div class="nm">${sn?esc(EN[id].n):'???'}</div><div class="sub">${sn?`${k} tué${k>1?'s':''} · ${['Aperçu','Connu','Étudié','Disséqué','Expert'][t]}`:'Pas encore croisé'}</div></div>${t>=4?`<span class="chip ok">+${EN[id].boss?5:10} %</span>`:''}</button>`}).join('')}</div>`}
  return h;
 }
@@ -5294,6 +5296,7 @@ function selfTest(){const keep=JSON.stringify(S),ui={tab:UI.tab,modal:UI.modal,c
    // perso : une pastille seulement s’il y a vraiment quelque chose à choisir
    S.pp=1;S.perks=PERKS.map(p=>p.id);ck('pastille perk : éteinte quand tous les perks sont pris',!perkAvail()&&!persoDot(),0);
    S.perks=[];ck('pastille perk : allumée quand un perk est à prendre',perkAvail()&&persoDot(),0);S.pp=0;
+   {const sn0=S.st.seen;S.st.seen=Object.assign({},sn0||{});const miss=Object.keys(EN).filter(k=>BEST[k]).filter(k=>{S.st.seen[k]=1;return !vBest().includes('data-v="'+k+'"')});S.st.seen=sn0;ck('carnet v0.77.2 : toute créature croisée a sa fiche dans le Bestiaire (pas de pastille sans fiche)',!miss.length,miss)}
    ck('attributs : plafond 10 (v0.47.0)',ATMAX===10&&atCap(1)===10&&atCap(40)===10,[atCap(1)]);ck('attributs : échelle 1 à 10 (v0.47.0), attr() = valeur affichée',attrN('FOR')===Math.min(12,S.at.FOR+(bonus().FOR||0))&&attr('FOR')===attrN('FOR'),[S.at.FOR]);ck('attributs : un point tous les 3 niveaux, 13 au total (v0.47.0)',atLvPts(1)===0&&atLvPts(2)===1&&atLvPts(4)===1&&atLvPts(5)===2&&atLvPts(38)===13&&atLvPts(40)===13&&!atLvl(3)&&atLvl(38)&&!atLvl(41),[atLvPts(5),atLvPts(40)]);ck('création : 3 points, jusqu’à 4 points rendus en baissant plusieurs attributs (v0.47.0)',crLeft({FOR:5,END:5,PER:5,AGI:5,INT:4,CHA:4,CHC:5})===5&&crLeft({FOR:5,END:5,PER:5,AGI:5,INT:3,CHA:3,CHC:5})===7&&crLeft({FOR:5,END:5,PER:5,AGI:5,INT:3,CHA:3,CHC:3})===7&&crDef({FOR:5,END:5,PER:5,AGI:5,INT:4,CHA:4,CHC:5})===2&&crLeft({FOR:5,END:5,PER:5,AGI:5,INT:5,CHA:5,CHC:5})===3&&crLeft({FOR:7,END:6,PER:5,AGI:5,INT:5,CHA:5,CHC:5})===0&&crLeft({FOR:7,END:7,PER:6,AGI:5,INT:5,CHA:3,CHC:5})===0,0);S.ap=2;for(const k in S.at)S.at[k]=ATMAX;ck('pastille attribut : éteinte quand tout est au maximum',!apAvail(),0);S.at.FOR=atCap()-1;ck('pastille attribut : allumée s’il reste de la place',apAvail(),0);S.ap=0;
    S.tp=1;ck('pastille entraînement : allumée dans Équipement, pas dans Compétences',persoDot()&&vPerso0().includes('dot2'),0);S.tp=0;
    // marché et sac : une pastille par changement, éteinte par la visite
