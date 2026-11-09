@@ -3,10 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Endzone 2141 v0.84.1</title>
+<title>Endzone 2141 v0.84.2</title>
 <!--APERCU DU LIEN v0.77.1 : carte affichée par Discord, WhatsApp, Messenger quand on partage le lien (image apercu.jpg à côté de index.html dans Endzone2141-jeu, fabriquée par tools/apercu_lien.py)-->
 <meta name="description" content="Descends dans les abris irradiés de Vivograd, loote, remonte vivant. RPG post-apo à l'humour noir, gratuit, sur téléphone, sans installation.">
-<meta name="theme-color" content="#ff3d8b">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:site_name" content="Endzone 2141">
@@ -561,7 +560,7 @@ nav .dot{position:absolute;top:5px;left:calc(50% + 7px);width:9px;height:9px;bor
 .rbar.tall[data-r]{min-height:104px}
 .card.evc{padding:11px 12px}.card.evc .ctitle{margin-bottom:4px}.card.evc .ctitle h2{font-size:22px}.card.evc>p{margin:4px 0 8px;line-height:1.35}.card.evc .chips{gap:5px}.card.evc .chip{padding:3px 9px}
 .ccard .rb{height:40px;margin-bottom:16px}.ccard:has(.rb){padding-bottom:8px}.ccard span{font-size:11.5px}.warnb{margin:6px 0}.card.evc .chips{margin:2px 0}
-.stickc{position:sticky;bottom:calc(var(--navh,64px) + env(safe-area-inset-bottom,0px) + 8px);z-index:6;padding:8px 0 2px;background:linear-gradient(180deg,rgba(14,8,20,0),var(--panel) 45%)}
+.stickc{position:static;/*v0.84.2 : plus de bouton collant, il cachait le butin*/z-index:6;padding:8px 0 2px;background:linear-gradient(180deg,rgba(14,8,20,0),var(--panel) 45%)}
 .rbar.tall[data-r]{min-height:118px}
 .ccard .rb{height:66px;margin-bottom:20px}
 /*FIN COMBAT ET FICHES*/
@@ -688,7 +687,8 @@ nav .dot{position:absolute;top:5px;left:calc(50% + 7px);width:9px;height:9px;bor
 #zwrap .enemies.egb .enemy .grow{gap:1px;padding:4px 7px}
 /*ICÔNES v0.60.0 : seule la carte d'un groupe de 3 passe en icônes (nom sur 2 lignes, PV dans la barre, 2 pastilles) ; seule, la carte est plus étroite*/
 .enemy .cmp,.enemy .tn{display:none}
-#zwrap .enemies.eg1 .enemy .grow{max-width:74%;align-self:center;margin-left:auto;margin-right:auto}
+#zwrap .enemies.eg1 .enemy .grow{max-width:94%;align-self:center;margin-left:auto;margin-right:auto;padding:7px 10px}
+#zwrap .enemies.eg1 .enemy .grow>.track{height:14px}#zwrap .enemies.eg1 .enemy .hrow b{font-size:16px}#zwrap .enemies.eg1 .enemy .grow>.small{font-size:13px}/*v0.84.2 : carte de l'ennemi seul plus grande (74 % -> 94 %)*/
 #zwrap .enemies.eg3 .enemy:not(.boss):not(.nem) .grow>.small.muted,#zwrap .enemies.eg3 .enemy:not(.boss):not(.nem) .grow>.intent{display:none!important}
 #zwrap .enemies.eg3 .enemy:not(.boss):not(.nem) .cmp{display:flex;flex-wrap:nowrap;gap:3px;align-items:center;justify-content:space-between}
 #zwrap .enemies.eg3 .enemy:not(.boss):not(.nem) .tn{display:block;position:absolute;left:0;right:0;top:0;text-align:center;font-size:10.5px;line-height:13px;color:#fff;text-shadow:0 1px 2px #000,0 0 3px #000}
@@ -915,7 +915,7 @@ nav .dot{position:absolute;top:5px;left:calc(50% + 7px);width:9px;height:9px;bor
  Fin du fichier : démarrage (load, awayCheck) puis render().
 ============================================================================ */
 'use strict';
-const VERSION='0.84.1';
+const VERSION='0.84.2';
 // Niveau maximum du personnage (v0.12.12, décision du joueur du 24/10/2026 : 40, atteint en environ 10 h sans auto-combat ; extensible). Tranches des abris : voir ABRIS (lv, lvl) et docs/GDD.md.
 const LVMAX=40;
 // Dégâts minimum d'un coup ennemi, en part du coup brut (v0.12.13, décision liée au journal #8 du joueur) : l'armure et la réduction fixe ne peuvent plus ramener un coup à 1 PV. Ne touche pas les persos peu armés.
@@ -3485,7 +3485,9 @@ function bulkList(r){return S.inv.filter(it=>!isStack(it)&&it.r===+r)}
 function bulkSell(r){if(S.run)return;const n=bulkList(r).length;if(!n)return toast('Rien à vendre dans cette rareté.');sellWhere(it=>!isStack(it)&&it.r===+r,`${n} objet${n>1?'s':''} ${RARS[r].n.toLowerCase()}${n>1?'s':''} vendu${n>1?'s':''}`)}
 function bulkScrap(r){if(S.run)return;const list=bulkList(r);if(!list.length)return toast('Rien à démonter dans cette rareté.');S.inv=S.inv.filter(it=>!list.includes(it));const got=scrapList(list);toast(`${list.length} objet${list.length>1?'s':''} démonté${list.length>1?'s':''} : ${matsTxt(got)}`);save();render()}
 function junkList(){return S.inv.filter(isJunk)}
-function bulkCard(){let h='';{const J=junkList();if(J.length){const v=J.reduce((a,it)=>a+sellPrice(it),0);h+=`<div class="hrow" style="gap:8px;margin:8px 0"><span class="grow small"><b>Camelote</b> · ${J.length} objet${J.length>1?'s':''} moins bon${J.length>1?'s':''} que ce que tu portes</span><button class="btn sm main" data-a="bjunk">Tout vendre +${fmt(v)}</button></div>`}}for(const r of [0,1,2]){const L=bulkList(r);if(!L.length)continue;const v=L.reduce((a,it)=>a+sellPrice(it),0);
+/* v0.84.2 : la camelote n'est pas que du blanc (Rouillé à Modifié, moins bons que le porté) ; la carte dit lesquels, aux couleurs de rareté. */
+function junkMix(J){const c=[0,0,0];J.forEach(it=>{if(it.r>=0&&it.r<3)c[it.r]++});return c.map((n,r)=>n?`<span style="color:${RARS[r].c}">${n}<span> </span><span>${RARS[r].n}</span></span>`:'').filter(Boolean).join(' · ')}
+function bulkCard(){let h='';{const J=junkList();if(J.length){const v=J.reduce((a,it)=>a+sellPrice(it),0);h+=`<div class="hrow" style="gap:8px;margin:8px 0"><span class="grow small"><b>Camelote</b> · ${J.length} objet${J.length>1?'s':''} moins bon${J.length>1?'s':''} que ce que tu portes<br>${junkMix(J)}</span><button class="btn sm main" data-a="bjunk">Tout vendre +${fmt(v)}</button></div>`}}for(const r of [0,1,2]){const L=bulkList(r);if(!L.length)continue;const v=L.reduce((a,it)=>a+sellPrice(it),0);
   h+=`<div class="hrow" style="gap:8px;margin:8px 0"><span class="grow small" style="color:${RARS[r].c}"><b>${RARS[r].n}</b> · ${L.length} objet${L.length>1?'s':''}</span><button class="btn sm" data-a="bsell" data-v="${r}">Vendre +${fmt(v)}</button><button class="btn sm" data-a="bscrap" data-v="${r}">${ic('wrench',14)} Démonter</button></div>`}
  const mts=S.inv.filter(it=>isStack(it)&&B[it.b].t==='m'),mv=mts.reduce((s,it)=>s+sellPrice(it)*it.q,0);if(mv)h+=`<div class="hrow" style="gap:8px;margin:8px 0"><span class="grow small"><b>Matériaux</b> · ${mts.reduce((a,it)=>a+it.q,0)}</span><button class="btn sm" data-a="sellmats">Vendre +${fmt(mv)}</button></div>`;
  return `<div class="card"><h3 style="margin-top:0">${ic('coins',18)} Vendre ou démonter en vrac</h3>${h||'<p class="small muted">Rien à trier : aucun objet gris, vert ou bleu, ni matériau dans ta planque.</p>'}<p class="small muted" style="margin:6px 0 0">Ce que tu portes n’est jamais touché. Touche deux fois pour confirmer.</p></div>`}
@@ -3856,7 +3858,7 @@ function abTint(){return S&&S.run&&UI.tab==='zone'?S.run.ab:''}
  la place en trop agrandit les créatures (plafonnées par la largeur), le manque les rétrécit puis raccourcit le journal. Mesuré à chaque render et au redimensionnement.*/
 const FIT_PEEK=30;
 /* v0.76.2 (règle du joueur) : le journal de combat a une hauteur FIXE, décidée au début du combat d'après le nombre d'ennemis : 1 ou 2 ennemis = 7 lignes, 3 ou plus = 6 lignes (21 px la ligne + 4). Il ne bouge ni quand on ferme le tutoriel ou une bulle, ni quand un ennemi meurt, ni quand un renfort arrive ; seul un écran trop petit le raccourcit (en dernier recours, après les créatures). */
-function logLines(cb){if(cb.jl==null)cb.jl=cb.en.length<=2?7:6;return cb.jl}
+function logLines(cb){if(cb.jl==null)cb.jl=5;return cb.jl}
 /*v0.74.1 : NOMS COUPÉS. Le nom d'un monstre rétrécit (jusqu'à 10 px) avant d'être coupé ; seulement si 10 px ne suffisent pas, il passe sur deux lignes (classe nm2).*/
 function fitNames(){try{const r=document.createRange();document.querySelectorAll('#view .enemies .enemy .hrow b').forEach(b=>{b.style.removeProperty('font-size');b.classList.remove('nm2');const ov=()=>{r.selectNodeContents(b);return r.getBoundingClientRect().width>b.getBoundingClientRect().width+.05};let fs=parseFloat(getComputedStyle(b).fontSize);while(ov()&&fs>10){fs-=.5;b.style.fontSize=fs+'px'}if(ov())b.classList.add('nm2')})}catch(e){}}
 function fitCombat(){try{const z=document.getElementById('zwrap'),n=document.querySelector('nav'),a=document.querySelector('#view .card.me .acts');if(!z||!n||!a||!S.run||!S.run.cb||UI.tab!=='zone')return;
@@ -3865,7 +3867,7 @@ function fitCombat(){try{const z=document.getElementById('zwrap'),n=document.que
  const gap=()=>(n.getBoundingClientRect().top-a.getBoundingClientRect().bottom)*k-FIT_PEEK;
  for(let it=0;it<3&&Math.abs(gap())>2;it++){
  if(e.classList.contains('eg')){const cs=getComputedStyle(e),cols=+cs.getPropertyValue('--egc')||1,rows=e.classList.contains('eg4')?2:1;
-  const egb=e.classList.contains('egb'),h0=parseFloat(cs.getPropertyValue('--egh'))||100,cap=Math.min(e.clientWidth/cols*1.1,cols===1?240:400);
+  const egb=e.classList.contains('egb'),h0=parseFloat(cs.getPropertyValue('--egh'))||100,cap=Math.min(e.clientWidth/cols*1.35,cols===1?300:400);
   const h=Math.max(rows>1||egb?34:60,Math.min(420,h0+gap()/(egb?2.3:rows)));e.style.setProperty('--egh',h+'px');e.style.setProperty('--egs',Math.min(h,cap)+'px')}
  else{const t=e.querySelector('.enemy.boss .etile.spt,.enemy.nem .etile.spt');if(t&&e.querySelectorAll('.enemy').length===1){const p=t.querySelector('.spr'),h0=t.offsetHeight,w0=t.offsetWidth;
   const h=Math.max(80,Math.min(340,h0+gap())),w=Math.min(e.clientWidth*.48,w0*h/h0);t.style.height=h+'px';t.style.width=w+'px';if(p){p.style.maxHeight=h+'px';p.style.maxWidth=w+'px'}}}}
@@ -5919,7 +5921,6 @@ function vMarche(){
   <div class="svc">${pic('purge',34,'rad')}<b>Purge</b><span>${ecoNiv()>1?fmt(Math.round(ecoNiv()*10)/10)+' kopeks':'1 kopek'} par rad</span><button class="btn sm full ${S.rads?'':'off'}" data-a="cpurge">Purger ${S.rads} rads</button></div>
   <div class="svc"><span class="svp">${spr('g_sokol')}</span><b>Armurerie Sokol</b><span>${rep.length?`${fmt(rc)} kopeks`:'Rien à réparer'}</span><button class="btn sm full ${rep.length?'':'off'}" data-a="repair">Tout réparer</button></div>
 </div>
-  <button class="btn full" data-a="tab" data-v="sac">${pic('vendre',22,'bag')} Vendre ton butin : onglet Sac</button>
   <p class="small muted">Vente en vrac par rareté, matériaux, ou objet par objet : tout se fait dans le Sac.</p>`;
  }else if(T==='etabli'){
   const rustN=rust.length;
