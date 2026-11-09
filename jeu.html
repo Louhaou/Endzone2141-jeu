@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Endzone 2141 v0.84.2</title>
+<title>Endzone 2141 v0.84.3</title>
 <!--APERCU DU LIEN v0.77.1 : carte affichée par Discord, WhatsApp, Messenger quand on partage le lien (image apercu.jpg à côté de index.html dans Endzone2141-jeu, fabriquée par tools/apercu_lien.py)-->
 <meta name="description" content="Descends dans les abris irradiés de Vivograd, loote, remonte vivant. RPG post-apo à l'humour noir, gratuit, sur téléphone, sans installation.">
 <meta property="og:type" content="website">
@@ -165,7 +165,7 @@ main{padding:14px}
 .ccard.safe{--rc:var(--good)}.ccard.risk{--rc:var(--pink)}.ccard:has(.rb){padding:0 0 12px;overflow:hidden}.ccard .rb{align-self:stretch;height:84px;background:var(--rd) center/cover;border-bottom:2px solid var(--rc);margin-bottom:20px;position:relative}.ccard .rb .pc,.rcard .rb .pc{display:flex!important;align-items:center;justify-content:center}.ccard .rb .pc>svg,.rcard .rb .pc>svg{width:82%!important;height:82%!important;flex:none;display:block}/*v0.76.2 : l'icône du rond est centrée (elle débordait de 6 px à droite)*/
 .ccard .rb .pc{position:absolute;left:50%;bottom:-17px;transform:translateX(-50%);width:36px;height:36px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--rc);background:var(--bg)}.ccard:has(.rb)>:not(.rb){margin-left:10px;margin-right:10px}
 /*FIN SCENES*/
-.rcard:has(.rb){padding:0 0 12px;overflow:hidden}.rcard .rb{align-self:stretch;height:50px;background:var(--rd) center/cover;border-bottom:2px solid var(--rc);margin-bottom:18px;position:relative}.rcard .rb .pc{position:absolute;left:50%;bottom:-17px;transform:translateX(-50%);width:36px;height:36px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--rc);background:var(--bg);color:var(--rc);box-shadow:0 0 10px color-mix(in srgb,var(--rc) 55%,transparent)}.rcard:has(.rb)>:not(.rb){margin-left:8px;margin-right:8px}
+.rcard:has(.rb){padding:0 0 12px;overflow:hidden}.rcard .rb{align-self:stretch;height:50px;background:var(--rd) center/cover;border-bottom:2px solid var(--rc);margin-bottom:28px;position:relative}.rcard .rb .pc{position:absolute;left:50%;bottom:-26px;transform:translateX(-50%);width:52px;height:52px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--rc);background:var(--bg);color:var(--rc);box-shadow:0 0 10px color-mix(in srgb,var(--rc) 55%,transparent)}.rcard:has(.rb)>:not(.rb){margin-left:8px;margin-right:8px}
 .rcard.terminal{--rc:var(--cyan)}.rcard.piege{--rc:var(--blood)}.rcard.event{--rc:var(--violet)}
 .pips{display:inline-flex;gap:2px}.pips i{width:7px;height:7px;border-radius:50%;background:var(--line)}
 .pips.risk i.on{background:var(--pink)}.pips.loot i.on{background:var(--amber)}
@@ -710,7 +710,7 @@ nav .dot{position:absolute;top:5px;left:calc(50% + 7px);width:9px;height:9px;bor
 /*AUDIT v0.70.0 (étape a) : descriptions du Comptoir sur deux lignes*/
 .list.compact.ctr2 .sub{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 /*AUDIT v0.70.0 (étape a) : petits écrans (moins de 700 px de haut) : cartes de salles et terminal plus serrés pour atteindre les boutons sans défiler*/
-@media (max-height:700px){.rcard{gap:3px}.rcard .rb{height:38px;margin-bottom:15px}.rcard:has(.rb){padding-bottom:8px}.rcard .go{margin-top:2px;padding:4px 14px}.card.term{padding-top:8px;padding-bottom:8px}.card.term .hwords{gap:3px}.card.term p.mono{margin:4px 0}}
+@media (max-height:700px){.rcard{gap:3px}.rcard .rb{height:38px;margin-bottom:21px}.rcard .rb .pc{width:42px;height:42px;bottom:-21px}.rcard:has(.rb){padding-bottom:8px}.rcard .go{margin-top:2px;padding:4px 14px}.card.term{padding-top:8px;padding-bottom:8px}.card.term .hwords{gap:3px}.card.term p.mono{margin:4px 0}}
 /*BUTIN JUS v0.83.0*/
 #lfx{position:fixed;inset:0;z-index:60;pointer-events:none;--c:#a855ff}
 #lfx::before{content:"";position:absolute;inset:0;box-shadow:inset 0 0 90px 18px var(--c);opacity:0;animation:lfxg 1.1s ease-out}
@@ -915,7 +915,7 @@ nav .dot{position:absolute;top:5px;left:calc(50% + 7px);width:9px;height:9px;bor
  Fin du fichier : démarrage (load, awayCheck) puis render().
 ============================================================================ */
 'use strict';
-const VERSION='0.84.2';
+const VERSION='0.84.3';
 // Niveau maximum du personnage (v0.12.12, décision du joueur du 24/10/2026 : 40, atteint en environ 10 h sans auto-combat ; extensible). Tranches des abris : voir ABRIS (lv, lvl) et docs/GDD.md.
 const LVMAX=40;
 // Dégâts minimum d'un coup ennemi, en part du coup brut (v0.12.13, décision liée au journal #8 du joueur) : l'armure et la réduction fixe ne peuvent plus ramener un coup à 1 PV. Ne touche pas les persos peu armés.
@@ -3858,7 +3858,7 @@ function abTint(){return S&&S.run&&UI.tab==='zone'?S.run.ab:''}
  la place en trop agrandit les créatures (plafonnées par la largeur), le manque les rétrécit puis raccourcit le journal. Mesuré à chaque render et au redimensionnement.*/
 const FIT_PEEK=30;
 /* v0.76.2 (règle du joueur) : le journal de combat a une hauteur FIXE, décidée au début du combat d'après le nombre d'ennemis : 1 ou 2 ennemis = 7 lignes, 3 ou plus = 6 lignes (21 px la ligne + 4). Il ne bouge ni quand on ferme le tutoriel ou une bulle, ni quand un ennemi meurt, ni quand un renfort arrive ; seul un écran trop petit le raccourcit (en dernier recours, après les créatures). */
-function logLines(cb){if(cb.jl==null)cb.jl=5;return cb.jl}
+function logLines(cb){if(cb.jl==null)cb.jl=cb.en.length<=1?6:5;return cb.jl}
 /*v0.74.1 : NOMS COUPÉS. Le nom d'un monstre rétrécit (jusqu'à 10 px) avant d'être coupé ; seulement si 10 px ne suffisent pas, il passe sur deux lignes (classe nm2).*/
 function fitNames(){try{const r=document.createRange();document.querySelectorAll('#view .enemies .enemy .hrow b').forEach(b=>{b.style.removeProperty('font-size');b.classList.remove('nm2');const ov=()=>{r.selectNodeContents(b);return r.getBoundingClientRect().width>b.getBoundingClientRect().width+.05};let fs=parseFloat(getComputedStyle(b).fontSize);while(ov()&&fs>10){fs-=.5;b.style.fontSize=fs+'px'}if(ov())b.classList.add('nm2')})}catch(e){}}
 function fitCombat(){try{const z=document.getElementById('zwrap'),n=document.querySelector('nav'),a=document.querySelector('#view .card.me .acts');if(!z||!n||!a||!S.run||!S.run.cb||UI.tab!=='zone')return;
@@ -3867,7 +3867,7 @@ function fitCombat(){try{const z=document.getElementById('zwrap'),n=document.que
  const gap=()=>(n.getBoundingClientRect().top-a.getBoundingClientRect().bottom)*k-FIT_PEEK;
  for(let it=0;it<3&&Math.abs(gap())>2;it++){
  if(e.classList.contains('eg')){const cs=getComputedStyle(e),cols=+cs.getPropertyValue('--egc')||1,rows=e.classList.contains('eg4')?2:1;
-  const egb=e.classList.contains('egb'),h0=parseFloat(cs.getPropertyValue('--egh'))||100,cap=Math.min(e.clientWidth/cols*1.35,cols===1?300:400);
+  const egb=e.classList.contains('egb'),h0=parseFloat(cs.getPropertyValue('--egh'))||100,cap=Math.min(e.clientWidth/cols*1.35,cols===1?240:400);
   const h=Math.max(rows>1||egb?34:60,Math.min(420,h0+gap()/(egb?2.3:rows)));e.style.setProperty('--egh',h+'px');e.style.setProperty('--egs',Math.min(h,cap)+'px')}
  else{const t=e.querySelector('.enemy.boss .etile.spt,.enemy.nem .etile.spt');if(t&&e.querySelectorAll('.enemy').length===1){const p=t.querySelector('.spr'),h0=t.offsetHeight,w0=t.offsetWidth;
   const h=Math.max(80,Math.min(340,h0+gap())),w=Math.min(e.clientWidth*.48,w0*h/h0);t.style.height=h+'px';t.style.width=w+'px';if(p){p.style.maxHeight=h+'px';p.style.maxWidth=w+'px'}}}}
