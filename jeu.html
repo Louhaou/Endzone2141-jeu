@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Endzone 2141 v0.77.2</title>
+<title>Endzone 2141 v0.78.0</title>
 <!--APERCU DU LIEN v0.77.1 : carte affichée par Discord, WhatsApp, Messenger quand on partage le lien (image apercu.jpg à côté de index.html dans Endzone2141-jeu, fabriquée par tools/apercu_lien.py)-->
 <meta name="description" content="Descends dans les abris irradiés de Vivograd, loote, remonte vivant. RPG post-apo à l'humour noir, gratuit, sur téléphone, sans installation.">
 <meta name="theme-color" content="#ff3d8b">
@@ -318,7 +318,7 @@ nav button.on .ic{filter:drop-shadow(0 0 6px rgba(255,63,164,.7))}
 .list.compact .tile .ic{width:20px;height:20px}
 .list.compact .nm{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .list.compact .sub{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cmpd{white-space:nowrap;flex:none;min-width:50px;text-align:center;padding:4px 7px;border-radius:999px;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+.pft{position:relative}.pft .rec{position:absolute;top:3px;right:3px;font-style:normal;font-size:10px;font-weight:700;padding:1px 5px;border-radius:8px;background:var(--pink);color:#12081c;z-index:2}.recb{display:block;font-size:12px;font-weight:700;color:var(--pink);margin:2px 0}.junk{margin:8px 0;border:1px dashed var(--line);border-radius:10px;padding:6px 10px}.junk summary{cursor:pointer;font-size:12.5px;color:var(--mute);list-style:none}.junk[open] summary{margin-bottom:6px}.eqwhy{font-size:12px;color:var(--mute);margin-top:3px;line-height:1.3}.cmpd{white-space:nowrap;flex:none;min-width:50px;text-align:center;padding:4px 7px;border-radius:999px;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
 .cmpd.up{background:rgba(98,227,138,.15);color:var(--good)}.cmpd.down{background:rgba(255,90,100,.12);color:var(--blood)}.cmpd.eq{color:var(--mute);background:var(--panel2)}.cmpd.new{background:rgba(98,227,138,.15);color:var(--good);font-size:12px}
 .lr .cmpd{min-width:0;padding:1px 6px;font-size:11px;margin-left:4px}
 .list.compact .cmpd{min-width:44px;font-size:12px;padding:3px 6px}
@@ -414,7 +414,7 @@ nav .dot{position:absolute;top:5px;left:calc(50% + 7px);width:9px;height:9px;bor
 .ulk{display:grid;gap:12px}.ur{display:flex;gap:10px;align-items:flex-start}.ur>svg{flex:none;margin-top:2px;color:var(--violet)}
 .fmis{display:grid;gap:2px;margin-top:10px;padding:9px 11px;border-radius:10px;border:1px dashed #5a3a7a;font-size:.9em}.fmis.ok{border-style:solid;border-color:#24553a}.fmis.done{opacity:.7}.fmis b{font-size:.85em;color:var(--r3)}
 .ftier{display:grid;gap:6px;margin-top:4px}.ftier div{border:1px solid var(--line,#3a2a4a);border-radius:10px;padding:7px 10px;font-size:.86em;opacity:.7}.ftier b{display:block;font-size:.85em;letter-spacing:.02em}.ftier .on{opacity:1;color:var(--good);border-color:#24553a}.ftier .bad{opacity:1;color:var(--blood);border-color:#5a2030}
-.itabs.p6{grid-template-columns:repeat(4,1fr)}.row.off{opacity:.55}
+.itabs.p6{grid-template-columns:repeat(5,1fr)}.card.dsc{display:block}.row.off{opacity:.55}
 .doors{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -14px 12px;padding:0 14px 4px;scrollbar-width:none}
 .doors::-webkit-scrollbar{display:none}
 .doorc{flex:0 0 88%;scroll-snap-align:center;border-radius:16px;overflow:hidden;border:1px solid var(--violet-dim);background:var(--panel);display:flex;flex-direction:column}
@@ -901,7 +901,7 @@ nav .dot{position:absolute;top:5px;left:calc(50% + 7px);width:9px;height:9px;bor
  Fin du fichier : démarrage (load, awayCheck) puis render().
 ============================================================================ */
 'use strict';
-const VERSION='0.77.2';
+const VERSION='0.78.0';
 // Niveau maximum du personnage (v0.12.12, décision du joueur du 24/10/2026 : 40, atteint en environ 10 h sans auto-combat ; extensible). Tranches des abris : voir ABRIS (lv, lvl) et docs/GDD.md.
 const LVMAX=40;
 // Dégâts minimum d'un coup ennemi, en part du coup brut (v0.12.13, décision liée au journal #8 du joueur) : l'armure et la réduction fixe ne peuvent plus ramener un coup à 1 PV. Ne touche pas les persos peu armés.
@@ -2415,11 +2415,12 @@ function startRun(id){
  const ab=ABRIS.find(a=>a.id===id);if(!ab||ab.lock)return;
  if(!bossOk(ab))return toast(`${gateTxt(ab)}, au fond de : ${ABRIS.find(a=>a.id===ab.needBoss).n}.`);
  dirty();
- UI.tip=null;S.run={ab:id,pacts:[],e:0,r:0,map:genMap(ab),bag:[],kop:0,sc:'map',cb:null,ev:null,log:[],iod:0,rev:false,pend:0,kills:0,path:[],pr:S.prep||{},r0:S.rads};S.prep={};fgPlace();dfPick();
+ UI.tip=null;S.run={ab:id,pacts:[],e:0,r:0,map:genMap(ab),bag:[],kop:0,sc:'map',cb:null,ev:null,log:[],iod:0,rev:false,pend:0,kills:0,path:[],pr:S.prep||{},r0:S.rads};S.prep={};if(!SIM&&id==='lenine'&&nDesc()===0){S.run.rod=1;rodMap(S.run.map);dscSee('rod')}fgPlace();if(disc('df'))dfPick();
  if(S.run.pr.dope){S.rads=Math.min(999,S.rads+40);S.hp=Math.round(S.hp*1.1)}
  if(S.run.pr.bnt)S.run.bnt={k:S.run.pr.bnt,done:false};
  S.last=null;quest('q1');if(overLv(ab))log('Cet abri est trop facile pour toi : kopeks et XP des ennemis divisés par deux.','mute');
  if(ab.lv&&(S.lvl||1)<ab.lv)log(`Niveau ${S.lvl} pour un abri de niveau ${ab.lv} : ennemis +${Math.round((gapF(ab)-1)*100)} %, mais XP +${Math.round((underF()-1)*100)} %.`,'mute');
+ if(S.run.rod)log(ROD_GLEB[0],'bark');
  log(pick(id==='aurora'?ENTER5:id==='kova'?ENTER4:id==='iode'?ENTER3:id==='ligne2'?ENTER2:ENTER),'mute');
  if(id==='ligne2'&&chance(.3)){const st=stationTxt();if(st)log(st,'mute')}
  if(S.run.bnt)log(`Contrat en poche : ${BNT[S.run.bnt.k].n}.`,'good');
@@ -2533,8 +2534,8 @@ function enterRoom(i){
  run.room=type;run.rv=rvOf(run.e,run.r,i);run.path=run.path||[];run.path.push({e:run.e,r:run.r,t:type});
  const e=run.e,th=10+5*(e+1);
  switch(type){
-  case 'combat':if(nemRoll())break;startCombat(rollGroup(false));break;
-  case 'fourg':{const g=rollGroup(false).slice(0,1);log('Un petit homme en blouse grise détale, un colis ficelé sur le dos. Son garde du corps, lui, ne détale pas.','bad');startCombat([fgMake(g[0])].concat(g));break}
+  case 'combat':if(run.rod){startCombat(rodFoes());break}if(nemRoll())break;startCombat(rollGroup(false));break;
+  case 'fourg':{dscSee('fg');const g=rollGroup(false).slice(0,1);log('Un petit homme en blouse grise détale, un colis ficelé sur le dos. Son garde du corps, lui, ne détale pas.','bad');startCombat([fgMake(g[0])].concat(g));break}
   case 'elite':if(run.ab==='lenine'&&e>=1&&chance(.4)){log('« Tu connais mon cousin Gleb, celui du Marché ? Moi, c’est l’autre Gleb. Celui qui a gardé ses dix doigts. »','bark');startCombat([mkEnemy('glebp',enemyLv('glebp'),true)])}else startCombat(rollGroup(true));break;
   case 'boss':{const ab=abri();const b=mkEnemy(ab.boss,EN[ab.boss].lv);const ad=ab.adds||'rat';{const a2=addW(mkEnemy(ad,ab.adds?EN[ad].lv+2:3));startCombat([b,a2],true);bossIntro(ab.boss)}break}
   case 'fouille':{ctrHit('fouille');run.fz=(run.fz||0)+1;if(fwOn('fouille')){const g0=S.hp;heal(Math.round(hpMax()*.1));if(S.hp>g0)log(`Pilleur de tombes : +${S.hp-g0} PV.`,'good')}log(pick(SEARCHX),'mute');
@@ -2543,13 +2544,13 @@ function enterRoom(i){
    if(run.ab==='lenine'&&chance(.35)){train('survie',3);run.sc='ev';run.ev={t:'Une épave',x:pick(['Une Lada Jigouli couchée sur le flanc, portières arrachées. Le conducteur est encore dedans, en version allégée.','Une Volga noire du Parti, pneus fondus, pare-brise étoilé par une tête. Sur la plage arrière, un chien en plastique qui hoche encore la tête.','Une Moskvitch rouillée, encastrée dans un pilier depuis 2079. Le compteur affiche 12 kilomètres. Les plus longs de sa vie.']),o:[{l:'Boîte à gants (kopeks, papiers)',go:'ep_bag'},{l:'Coffre (deux objets)',go:'ep_cof'},{l:'Autoradio (électronique)',go:'ep_rad'}]};break}
    if(chance(.04)){const k=Math.round(ri(60,120)*(e+1)*(hasPerk('comptable')?1.4:1));run.kop+=k;S.st.jack=(S.st.jack||0)+1;
     result('Jackpot : la planque d’un apparatchik','Derrière un faux mur, une valise du Bureau et l’apparatchik qui allait avec, momifié dans son costume. Des liasses de kopeks, et un objet emballé avec un soin tout administratif.',[randomLoot(ilvl()+1,{e,gear:true,min:3})],[`+${k} kopeks`]);run.ev.jack=true;toast('Jackpot !','jk');break}
-   const items=[];const n=(chance(.3)?2:1)+(hasPerk('fouineur')?1:0)+(vnOn()?1:0);for(let k=0;k<n;k++)items.push(randomLoot(ilvl(),{e}));
+   const items=[];const n=(chance(run.ab==='lenine'?PK_LOOT.fo:.3)?2:1)+(hasPerk('fouineur')?1:0)+(vnOn()?1:0);for(let k=0;k<n;k++)items.push(randomLoot(ilvl(),{e}));
    const c=chk('survie',th);let x='Tu retournes des carcasses de voitures, des casiers éventrés et un ou deux cadavres pas encore secs.';
    const ok=chance(c/100);train('survie',ok?4:2);
    if(ok){items.push(randomLoot(ilvl(),{e}));x+=' Sous un macchabée, ton instinct déniche une cache de plus.'}
    let nt=null;if(chance(.1))nt=addNote();if(nt)x+=` Dans une boîte à gants, entre un dentier et un œil de verre : « ${nt.t} ». Direction le carnet.`;
    roomXp(1,'exploration');result('Fouille',x,items);break}
-  case 'coffre':run.sc='ev';run.ev={kx:ri(0,3),t:'Coffre verrouillé',x:'Une caisse militaire cadenassée, à moitié enfouie sous les gravats et sous ce qui reste du dernier qui a essayé.',o:[{l:'Crocheter',sk:'crochetage',th,ok:'cof_ok',ko:'cof_ko'},{l:'Laisser le coffre',go:'next'}]};break;
+  case 'coffre':if(run.rod){run.sc='ev';run.ev={kx:ri(0,3),t:'Une caisse militaire',x:'Une caisse du Bureau, couvercle desserré. Quelqu’un l’a préparée pour toi. Ça ne s’est jamais produit.',o:[{l:'Soulever le couvercle',go:'cof_ok'}]};break}run.sc='ev';run.ev={kx:ri(0,3),t:'Coffre verrouillé',x:'Une caisse militaire cadenassée, à moitié enfouie sous les gravats et sous ce qui reste du dernier qui a essayé.',o:[{l:'Crocheter',sk:'crochetage',th,ok:'cof_ok',ko:'cof_ko'},{l:'Laisser le coffre',go:'next'}]};break;
   case 'piege':if(abri().id!=='lenine'){trap2();break}{const c=chk('explosifs',th);
    if(chance(Math.min(95,chkAttr('PER')+6*modLv('ant'))/100)){run.sc='ev';run.ev={t:'Fil-piège repéré',x:'Un fil à hauteur de cheville, relié à une grenade scotchée sur un tuyau. Un pied sans propriétaire traîne à côté. Indice.',o:[{l:'Désamorcer',sk:'explosifs',th,ok:'pie_ok',ko:'pie_ko'},{l:'Enjamber et continuer',go:'next'}]}}
    else{const d=ri(6,12)*(e+1);hurt(d);if(!S.run)return;result('Piège','Un déclic sous ta botte. L’explosion te plaque au mur. Tu comptes tes doigts : le compte est bon, pas celui des ongles.',[],[`-${d} PV`])}
@@ -2629,7 +2630,7 @@ function nextRoom0(){
  run.ride=0;run.r++;
  if(run.r>=ab.rows){if(run.e>=ab.et-1)return extract(true);run.sc='lift';if(ab.surch){run.bq=run.bq||{};if(run.bq[run.e]==null)run.bq[run.e]=chance(BT_P)?1:0}}else run.sc='map';
 }
-function descend(){const run=S.run;run.e++;ctrHit('deep',run.e+1);if(run.bnt&&!run.bnt.done&&run.bnt.k==='deep'&&run.e>=3){run.bnt.done=true;log('Contrat rempli : étage 4 atteint. Remonte vivant pour la prime.','good')}run.r=0;run.sc='map';if(run.e===2)quest('q5');log(`Le monte-charge grince jusqu’à l’étage ${run.e+1}. Quelque chose y a laissé un doigt.`,'mute');if(vnOn())log('Le bassin est inondé : l’eau te monte aux genoux, et quelque chose y nage à contre-courant.','rad');if(svOn())log('Le niveau est en surchauffe : l’air tremble, les murs tiédissent et ton compteur Geiger a cessé de compter. Il prie.','rad');fwFloor();save();render()}
+function descend(){const run=S.run;run.e++;ctrHit('deep',run.e+1);if(run.bnt&&!run.bnt.done&&run.bnt.k==='deep'&&run.e>=3){run.bnt.done=true;log('Contrat rempli : étage 4 atteint. Remonte vivant pour la prime.','good')}run.r=0;run.sc='map';if(run.e===2)quest('q5');if(run.rod&&run.e===1)log(ROD_GLEB[1],'bark');log(`Le monte-charge grince jusqu’à l’étage ${run.e+1}. Quelque chose y a laissé un doigt.`,'mute');if(run.rod&&run.e===2)log(ROD_GLEB[2],'bark');if(vnOn())log('Le bassin est inondé : l’eau te monte aux genoux, et quelque chose y nage à contre-courant.','rad');if(svOn())log('Le niveau est en surchauffe : l’air tremble, les murs tiédissent et ton compteur Geiger a cessé de compter. Il prie.','rad');fwFloor();save();render()}
 function extract(boss){
  const run=S.run;const ab=abri();dfCheck(1);let k=run.kop;if(boss)k=Math.round(k*1.25);
  const rt=petSell(run);k+=rt.k;farSet(run);if(boss){const bd=S.st.bkd||(S.st.bkd={});bd[ab.id]=1}
@@ -2694,7 +2695,7 @@ function colisModal(){const c=UI.colis;const f=c&&findItem(c.u);if(!f)return '';
  ${it.uq?`<div class="coluq"><b>${UNIQI[it.uq].n}</b> : ${esc(UNIQI[it.uq].d)}</div>`:''}${LORE[it.b]?`<p class="flav">${esc(LORE[it.b])}</p>`:''}<div class="colst">${itemStats(it)}${cmpCur(it)&&!c.eq&&!(B[it.b].s==='acc'&&B[it.b].t!=='w')?`<h3>Face à ce que tu portes</h3>${cmpTable(it,cmpCur(it))}`:''}</div>${best?`<div class="colbest">Meilleur que ce que tu portes${pc!=null?` : +${Math.round(pc)} %`:''}</div>`:''}${c.eq?'<div class="colbest">Équipé.</div>':''}
  </div><div class="colbtn colrev2">${best?'<button class="btn main full" data-a="coleq">Équiper</button>':''}${left?`<button class="btn full" data-a="colnext">Ouvrir le suivant (${left})</button>`:''}<button class="btn full" data-a="colok">Fermer</button></div></div></div>`}
 function colisSim(){let g=0;while(g++<10){const id=['colisd','colis'].find(k=>S.inv.some(x=>x.b===k));if(!id||!takeOne(id))break;const it=colisRoll(B[id].colis);addTo(S.inv,it);const cu=cmpCur(it),pc=cmpPct(it);if(!cu||(pc!=null&&pc>=5))equip(it.u)}}
-function fgPlace(){const run=S.run,ab=abri();if((nDesc()<1)||!chance(FG_P))return;const e=ri(0,ab.et-2),r=ri(0,ab.rows-1),o=run.map[e][r];if(!o||o.includes('boss'))return;o[ri(0,o.length-1)]='fourg';run.fg=[e,r]}
+function fgPlace(){const run=S.run,ab=abri();if((nDesc()<1)||!disc('fg')||!chance(FG_P))return;const e=ri(0,ab.et-2),r=ri(0,ab.rows-1),o=run.map[e][r];if(!o||o.includes('boss'))return;o[ri(0,o.length-1)]='fourg';run.fg=[e,r]}
 function fgMake(ref){const f=mkEnemy('fourg',ref?ref.lv:enemyLv('fourg'));f.hpMax=f.hp=Math.max(10,Math.round((ref?ref.hpMax:40)*FG_HP));f.ft=FG_T;return f}
 function petOn(){return !!S.st.pet}
 function petSell(run){const o={k:0,t:''};if(!petOn()){if(nDesc()+1>=PET_N){S.st.pet=1;o.t=' Un rat te suit jusqu’à la planque. Il a l’air d’aimer l’argent : à partir de maintenant, il revendra ta ferraille à chaque remontée.'}return o}
@@ -2903,12 +2904,47 @@ const COMBOX={boucherie:'Chaque mort te nourrit, chaque coup te met en appétit.
 function fwOn(id){return !!(S.run&&S.run.fw&&S.run.fw.includes(id))}
 function fwExp(e){let n=0;for(const f of FW_FL)if(e>=f)n++;return n}
 // v0.27.0 : conseils du nouveau joueur. Une carte courte la première fois seulement (S.st.tips, facultatif), fermée par « Compris » ; Options > Revoir les conseils les remet. Sans effet en simulation.
+/* ===================== PREMIER CONTACT (v0.78.0) =====================
+   Un joueur qui débute apprend UNE chose à la fois (retour d'un collègue, 09/11/2026 : « ça va vite, trop d'infos dès la première descente »).
+   Calendrier (nDesc() = descentes faites, morts comprises ; rien ne change en simulation ni pour une vieille partie de 8 descentes ou plus) :
+   descente 1 = rodage écrit à la main ; 2 = choisir sa salle ; 3 = Fourgueur et Colis ; 4 = Coups de fouet ; après le boss du Parking : défis, Roi des Rats. */
+const DISC_N={fg:2,fw:3},DISC_OLD=8;
+/* v0.78.0 : moins d'objets au Parking (2,1 à 2,7 pièces utiles par descente réussie contre 1,2 à 1,5 à la Ligne 2) : coffre = 2 ou 3 prises -> PK_LOOT.cof, 2e prise d'une fouille 30 % -> PK_LOOT.fo */
+const PK_LOOT={cof:[1,2],fo:.15};
+function bossKilled(){return !!(S.st&&S.st.bkd&&S.st.bkd.lenine)}
+function disc(k){if(SIM||!S||!S.st)return true;const n=nDesc();if(n>=DISC_OLD)return true;if(k==='df'||k==='nem')return bossKilled();return n>=(DISC_N[k]||0)}
+function rodOn(){return !!(S&&S.run&&S.run.rod)}
+const ROD_GLEB=['« Ici Gleb, du Marché. Premier étage : un rat. Ça mord, ça court, ça meurt. Fais dans l’ordre. »','« Étage deux. Ouvre la caisse, prends ce qui brille, et lis ce que dit le bouton avant de toucher. »','« Le monte-charge, c’est la sortie. Remonte avec ton sac et il est à toi. Meurs et il est à moi. »'];
+function rodFoes(){const run=S.run;if(run.e===0)return [mkEnemy('rat',enemyLv('rat'))];return rollGroup(false).slice(0,1)}
+function rodGear(){let it=null;for(let i=0;i<80;i++){const c=randomLoot(ilvl(),{e:0,gear:true,min:2,force:2});if(B[c.b].t!=='w')continue;it=c;const p=cmpPct(c);if(p!=null&&p>=20&&p<=200)break}return it||randomLoot(ilvl(),{e:0,gear:true,min:2})}
+function rodMap(map){map[0]=[['combat'],['coffre'],['repos']];map[1]=[['combat'],['fouille'],['repos']]}
+function rodLift(run){if(!run.rod||run.e!==1)return '';return `<div class="card tipc"><b>La règle d’or</b><p>Remonter, c’est garder ton sac : tout ce que tu as ramassé est à toi. Mourir, c’est tout perdre. Descendre plus bas rapporte plus, mais rien ne t’y oblige. Ta première descente est faite : remonte quand tu veux.</p></div>`}
+/* GUIDE du Carnet (v0.78.0, choix du joueur : les leçons du début ne sont pas supprimées) : « Les leçons du Bureau » + « Tes découvertes » (chaque carte d'apprentissage vue en jeu s'y range dans l'ordre ; ??? tant qu'elle n'est pas arrivée). S.st.dsc = {clé: rang} (facultatif, pas de migration). */
+const DSC=[['rod','Ta première descente','Un rat, une caisse, un monte-charge. Gleb te guide à la radio. Une seule chose à apprendre par étage.','descente 1'],
+ ['equip','Équiper un objet','Un objet marqué « Meilleur que… » te rend plus fort tout de suite. Le bouton Équiper dit pourquoi : dégâts par coup, PA, coups par tour. Ce que tu portes est à l’abri si tu meurs, le sac non.','ton premier coffre'],
+ ['lift','Remonter ou descendre','Remonter, c’est garder ton sac. Mourir, c’est tout perdre. Descendre plus bas rapporte plus, mais rien ne t’y oblige.','le premier monte-charge'],
+ ['room','Choisir sa salle','À partir de la deuxième descente, tu choisis ta salle parmi plusieurs cartes. Chacune ajoute des rads. Les salles suivantes restent cachées.','descente 2'],
+ ['fg','Le Fourgueur','Un petit homme en blouse grise court avec un Colis scellé. Tue-le avant qu’il file.','descente 3'],
+ ['colis','Colis scellé','Il s’ouvre à la surface, à la fin de ta descente. Si tu meurs avant, il est perdu avec le reste du sac.','descente 3'],
+ ['fw','Coup de fouet','Un bonus gratuit jusqu’à ta remontée. Deux pièces qui vont ensemble font un COMBO : plus de dégâts.','descente 4'],
+ ['df','Défis','Deux défis par descente. Réussis les deux : un Colis scellé.','après le boss du Parking'],
+ ['nem','Le Roi des Rats','Un rat qui apprend. Il revient plus fort à chaque rencontre. Tuer son dernier rang rapporte une Relique.','après le boss du Parking'],
+ ['pact','Pacte','Un pacte donne un avantage et coûte quelque chose en échange. Il dure jusqu’à ta remontée.','Ligne 2']];
+function dscSee(k){if(SIM||!S||!S.st)return;const d=S.st.dsc||(S.st.dsc={});if(d[k])return;d[k]=Object.keys(d).length+1}
+function dscKnown(){if(!S.st.dsc){S.st.dsc={};if(nDesc()>=DISC_OLD)DSC.forEach((x,i)=>S.st.dsc[x[0]]=i+1)}return S.st.dsc}
+function vGuide(){const d=dscKnown();
+ let h=`<div class="secth"><h3>Les leçons du Bureau</h3></div><div class="card"><p class="small muted">Descente, combat, butin, spécialisation, niveaux, ville : les pages du début, telles quelles.</p><button class="btn full" data-a="help">Revoir les leçons</button></div>`;
+ h+=`<div class="secth"><h3>Tes découvertes</h3><span class="small muted">${DSC.filter(x=>d[x[0]]).length}/${DSC.length}</span></div>`;
+ const known=DSC.filter(x=>d[x[0]]).sort((a,b)=>d[a[0]]-d[b[0]]),unk=DSC.filter(x=>!d[x[0]]);
+ h+=known.map(x=>`<button class="card dsc" data-a="cxd" data-v="d:${x[0]}" style="position:relative;text-align:left;width:100%">${cxdNew('d:'+x[0])?'<i class="nwd" style="top:8px;right:8px"></i>':''}<b>${esc(x[1])}</b><p class="small" style="margin:4px 0 0">${esc(x[2])}</p></button>`).join('');
+ h+=unk.map(x=>`<div class="card dsc muted"><b>???</b><p class="small" style="margin:4px 0 0">À découvrir : ${esc(x[3])}.</p></div>`).join('');
+ return h}
 const TIPS={
  fw:['Coup de fouet','Un bonus gratuit jusqu’à ta remontée. Deux pièces qui vont ensemble (un bonus et l’effet de ton arme Légendaire, ou deux bonus) font un COMBO : +'+COMBO_DMG+' % de dégâts. Les cartes COMBO t’en donnent un tout de suite.'],
  pact:['Pacte','Un pacte donne un avantage et coûte quelque chose en échange. Il dure jusqu’à ta remontée et s’ajoute aux autres. Lis les deux lignes avant de signer, ou ne signe rien.'],
  colis:['Colis scellé','Il s’ouvre à la surface, à la fin de ta descente. Si tu meurs avant, il est perdu avec le reste du sac. Dedans : une pièce à ton niveau, parfois bien mieux.'],
  df:['Défis','Deux défis par descente, affichés sous la carte. Réussis les deux : un Colis scellé.']};
-function tipCard(k,go){if(SIM||(S.st.tips&&S.st.tips[k]))return '';const T=TIPS[k];return `<div class="card tipc"><b>${esc(T[0])}</b><p>${esc(T[1])}</p><div class="hrow" style="gap:8px;margin-top:6px"><button class="btn sm main grow" data-a="tipok" data-v="${k}">Compris</button>${go?`<button class="btn sm" data-a="tipgo">Tout voir : Carnet > Bonus</button>`:''}</div></div>`}
+function tipCard(k,go){if(SIM||(S.st.tips&&S.st.tips[k]))return '';dscSee(k);const T=TIPS[k];return `<div class="card tipc"><b>${esc(T[0])}</b><p>${esc(T[1])}</p><div class="hrow" style="gap:8px;margin-top:6px"><button class="btn sm main grow" data-a="tipok" data-v="${k}">Compris</button>${go?`<button class="btn sm" data-a="tipgo">Tout voir : Carnet > Bonus</button>`:''}</div></div>`}
 function comboWith(id){return COMBOS.filter(c=>c.a==='u:'+id).map(c=>fwName(c.b))}
 function fwHas(x,eqU){return x.startsWith('f:')?fwOn(x.slice(2)):!!eqU[x.slice(2)]}
 function eqUq(){const u={};for(const s of SLOTS){const it=S.eq[s[0]];if(it&&it.uq)u[it.uq]=1}return u}
@@ -2917,7 +2953,7 @@ function comboCheck(){const r=S.run;if(!r)return;const have=r.cbo||(r.cbo=[]);fo
 function fwOffer(){const r=S.run,own=r.fw||(r.fw=[]),u=eqUq();const half=x=>COMBOS.some(c=>(c.a==='f:'+x&&fwHas(c.b,u))||(c.b==='f:'+x&&fwHas(c.a,u)));
  const pool=FOUETS.filter(f=>!own.includes(f.id)).map(f=>[f.id,half(f.id)?3:1]);const out=[];
  while(out.length<3&&pool.length){const id=wpick(pool);out.push(id);pool.splice(pool.findIndex(p=>p[0]===id),1)}return out}
-function fwFloor(){const r=S.run;if(!r||!FW_FL.includes(r.e)||(r.fwd&&r.fwd[r.e]))return;(r.fwd||(r.fwd={}))[r.e]=1;const o=fwOffer();if(!o.length)return;
+function fwFloor(){const r=S.run;if(!r||!FW_FL.includes(r.e)||(r.fwd&&r.fwd[r.e])||!disc('fw'))return;(r.fwd||(r.fwd={}))[r.e]=1;const o=fwOffer();if(!o.length)return;
  if(SIM){fwTake(fwAuto(o));return}r.fwo={opts:o,back:r.sc};r.sc='fw'}
 function fwAuto(o){const u=eqUq();const c=o.find(id=>COMBOS.some(k=>(k.a==='f:'+id&&fwHas(k.b,u))||(k.b==='f:'+id&&fwHas(k.a,u))));return c||pick(o)}
 function fwTake(id){const r=S.run;r.fw=r.fw||[];r.fw.push(id);dirty();const f=FWI[id];log(`Coup de fouet : ${f.n}. ${f.d}`,'good');jlNote('coup de fouet',f.n);if(!SIM){const k=S.st.fwk||(S.st.fwk={});k[id]=(k[id]||0)+1}comboCheck()}
@@ -3192,8 +3228,8 @@ function nemGroup(){
  return[k,...rollGroup(false).slice(0,rg>=4?3:rg>=3?2:1)];
 }
 function nemRoll(){
- const run=S.run;if(!nemOn()||run.nemSeen||(S.lvl||1)<3||run.e<1)return false;/* v0.70.0 (audit G7) : tirage une fois par descente (NEM_RUN, environ une descente sur quatre à trois) et non plus à chaque salle de combat (NEM_P 9 %, 29 à 41 % des descentes) : l'étage est tiré au départ, le Roi attend dans le premier combat de cet étage ou d'après */if(run.nemE===undefined)run.nemE=chance(NEM_RUN)?ri(1,Math.max(1,abri().et-2)):-1;if(!(run.nemForce||(run.nemE>=1&&run.e>=run.nemE)))return false;
- const n=nemS();run.nemSeen=1;n.vu++;n.last=`${abri().n.replace(/,.*/,'').replace(/^(Le |La |L’)/,'')}, étage ${run.e+1}`;
+ const run=S.run;if(!nemOn()||!disc('nem')||run.nemSeen||(S.lvl||1)<3||run.e<1)return false;/* v0.70.0 (audit G7) : tirage une fois par descente (NEM_RUN, environ une descente sur quatre à trois) et non plus à chaque salle de combat (NEM_P 9 %, 29 à 41 % des descentes) : l'étage est tiré au départ, le Roi attend dans le premier combat de cet étage ou d'après */if(run.nemE===undefined)run.nemE=chance(NEM_RUN)?ri(1,Math.max(1,abri().et-2)):-1;if(!(run.nemForce||(run.nemE>=1&&run.e>=run.nemE)))return false;
+ const n=nemS();run.nemSeen=1;n.vu++;dscSee('nem');n.last=`${abri().n.replace(/,.*/,'').replace(/^(Le |La |L’)/,'')}, étage ${run.e+1}`;
  const nm=S.name||'récupérateur';
  const x=n.vu===1?`Une couronne de dents sur un crâne de rat, posée sur un tas de sacs vides. « ${nm}. Je t’écoute marcher depuis ta première descente. Entre, je te présente la famille. »`
   :n.mort>0&&chance(.5)?'Il porte un morceau de ton ancien sac en cape. « Ça te va mal. À moi, ça va très bien. »'
@@ -3339,7 +3375,8 @@ function scrap(u){
 function bulkList(r){return S.inv.filter(it=>!isStack(it)&&it.r===+r)}
 function bulkSell(r){if(S.run)return;const n=bulkList(r).length;if(!n)return toast('Rien à vendre dans cette rareté.');sellWhere(it=>!isStack(it)&&it.r===+r,`${n} objet${n>1?'s':''} ${RARS[r].n.toLowerCase()}${n>1?'s':''} vendu${n>1?'s':''}`)}
 function bulkScrap(r){if(S.run)return;const list=bulkList(r);if(!list.length)return toast('Rien à démonter dans cette rareté.');S.inv=S.inv.filter(it=>!list.includes(it));const got=scrapList(list);toast(`${list.length} objet${list.length>1?'s':''} démonté${list.length>1?'s':''} : ${matsTxt(got)}`);save();render()}
-function bulkCard(){let h='';for(const r of [0,1,2]){const L=bulkList(r);if(!L.length)continue;const v=L.reduce((a,it)=>a+sellPrice(it),0);
+function junkList(){return S.inv.filter(isJunk)}
+function bulkCard(){let h='';{const J=junkList();if(J.length){const v=J.reduce((a,it)=>a+sellPrice(it),0);h+=`<div class="hrow" style="gap:8px;margin:8px 0"><span class="grow small"><b>Camelote</b> · ${J.length} objet${J.length>1?'s':''} moins bon${J.length>1?'s':''} que ce que tu portes</span><button class="btn sm main" data-a="bjunk">Tout vendre +${fmt(v)}</button></div>`}}for(const r of [0,1,2]){const L=bulkList(r);if(!L.length)continue;const v=L.reduce((a,it)=>a+sellPrice(it),0);
   h+=`<div class="hrow" style="gap:8px;margin:8px 0"><span class="grow small" style="color:${RARS[r].c}"><b>${RARS[r].n}</b> · ${L.length} objet${L.length>1?'s':''}</span><button class="btn sm" data-a="bsell" data-v="${r}">Vendre +${fmt(v)}</button><button class="btn sm" data-a="bscrap" data-v="${r}">${ic('wrench',14)} Démonter</button></div>`}
  const mts=S.inv.filter(it=>isStack(it)&&B[it.b].t==='m'),mv=mts.reduce((s,it)=>s+sellPrice(it)*it.q,0);if(mv)h+=`<div class="hrow" style="gap:8px;margin:8px 0"><span class="grow small"><b>Matériaux</b> · ${mts.reduce((a,it)=>a+it.q,0)}</span><button class="btn sm" data-a="sellmats">Vendre +${fmt(mv)}</button></div>`;
  return `<div class="card"><h3 style="margin-top:0">${ic('coins',18)} Vendre ou démonter en vrac</h3>${h||'<p class="small muted">Rien à trier : aucun objet gris, vert ou bleu, ni matériau dans ta planque.</p>'}<p class="small muted" style="margin:6px 0 0">Ce que tu portes n’est jamais touché. Touche deux fois pour confirmer.</p></div>`}
@@ -3431,7 +3468,7 @@ const EVH={
  hk_cache:()=>result('Casier sécurisé','Le casier s’ouvre avec un soupir hydraulique. Dedans : du matos de qualité et une photo de famille. La famille n’a pas survécu, le matos si.',[randomLoot(ilvl()+1,{e:S.run.e,gear:true,min:2})]),
  hk_tur:()=>{S.run.turret=true;result('Tourelle retournée','La tourelle du plafond pivote avec un grincement satisfait. Le prochain groupe d’ennemis va prendre une rafale avant même de te voir.',[],['Prochain combat : ennemis à -35 % de PV'])},
  hk_arch:()=>{gainXp(40);const nt=addNote();result('Archives','Des rapports, des dénonciations, des listes de noms rayés au feutre rouge. Sur la dernière, le feutre est encore humide.'+(nt?` Tu gardes un papier : « ${nt.t} ».`:''),[],['+40 XP'])},
- cof_ok:()=>{const kx=S.run.ev&&S.run.ev.kx!=null?S.run.ev.kx:ri(0,3);roomXp(1,'coffre ouvert');S.run.cof=(S.run.cof||0)+1;if(fwOn('fouille')){const g0=S.hp;heal(Math.round(hpMax()*.1));if(S.hp>g0)log(`Pilleur de tombes : +${S.hp-g0} PV.`,'good')}const items=[];const n=ri(2,3)+(pal('CHC')>=1?1:0);/* v0.17.2 : la première prise est toujours une pièce d'équipement au moins Modifiée */for(let i=0;i<n;i++)items.push(randomLoot(ilvl(),i===0?{e:S.run.e,mult:2,gear:true,min:2}:{e:S.run.e,mult:2}));result('Coffre ouvert','Le cadenas cède. Dedans, du matériel bien rangé et un doigt coupé qui servait de marque-page.',items);S.run.ev.kx=kx;S.run.ev.kopen=1},
+ cof_ok:()=>{const kx=S.run.ev&&S.run.ev.kx!=null?S.run.ev.kx:ri(0,3);roomXp(1,'coffre ouvert');S.run.cof=(S.run.cof||0)+1;if(fwOn('fouille')){const g0=S.hp;heal(Math.round(hpMax()*.1));if(S.hp>g0)log(`Pilleur de tombes : +${S.hp-g0} PV.`,'good')}const items=[];const n=(S.run.ab==='lenine'?ri(PK_LOOT.cof[0],PK_LOOT.cof[1]):ri(2,3))+(pal('CHC')>=1?1:0);/* v0.17.2 : la première prise est toujours une pièce d'équipement au moins Modifiée */for(let i=0;i<n;i++)items.push(randomLoot(ilvl(),i===0?{e:S.run.e,mult:2,gear:true,min:2}:{e:S.run.e,mult:2}));if(S.run.rod)items[0]=rodGear();result('Coffre ouvert','Le cadenas cède. Dedans, du matériel bien rangé et un doigt coupé qui servait de marque-page.',items);S.run.ev.kx=kx;S.run.ev.kopen=1},
  cof_ko:()=>{S.run.pend=1;log('Le crochet casse. Une alarme hurle, et quelque chose de gros se réveille de mauvaise humeur.','bad');startCombat(rollGroup(false))},
  pie_ok:()=>{ctrHit('trap');const items=[mkStack('ferraille',ri(1,2)),mkStack('electro',1)];result('Piège désamorcé','Tu récupères le détonateur et un peu de matériel. Tu as encore tous tes doigts : dans ce métier, ça mérite une médaille.',items)},
  pie_ko:()=>{const d=ri(8,14)*(S.run.e+1);hurt(d);if(!S.run)return;result('Raté','Le fil claque entre tes doigts. Tu te relèves sans sourcils, avec un éclat de quelqu’un d’autre planté dans la cuisse.',[],[`-${d} PV`])},
@@ -3674,9 +3711,9 @@ function vGens(){const n=GENS.filter(g=>gensMet(g.id)).length;
  let h=`<div class="secth"><h3>Gens de Vivograd</h3><span class="small muted">${n}/${GENS.length}</span></div>`;
  h+=GENS.map(g=>{const m=gensMet(g.id);const nw=m&&cxdNew('g:'+g.id,1);if(g.id==='roi'&&m)return `<div data-a="cxd" data-v="g:roi" style="position:relative">${nw?'<i class="nwd"></i>':''}${nemCard()}</div>`;return `<div class="gen ${m?'':'unk'}" ${m?`data-a="cxd" data-v="g:${g.id}"`:''}>${nw?'<i class="nwd"></i>':''}<div class="gp">${spr(g.id)}</div><div class="grow"><b>${m?esc(g.n):'???'}</b><div class="small muted">${m?esc(g.r):'Pas encore rencontré'}</div>${m?`<p>${esc(g.x)}</p>`:''}</div></div>`}).join('');
  return h}
-const CXT=['best','gens','w','a','x','bonus','notes'];
+const CXT=['best','gens','w','a','x','bonus','notes','guide'];
 function cxSig(k){if(k==='gens')return GENS.filter(g=>gensMet(g.id)).length;if(k==='best'){const sn=S.st.seen||{},kb=S.st.kb||{};return Object.keys(sn).filter(id=>EN[id]).length+Object.keys(kb).filter(id=>EN[id]).reduce((t,id)=>t+bestTier(id),0)}
- if(k==='notes')return (S.notes||[]).length;if(k==='bonus')return Object.keys(S.st.fwk||{}).length+Object.keys(S.st.cbk||{}).length;const cx=S.st.cx||{};let n=0;
+ if(k==='guide')return Object.keys(dscKnown()).length;if(k==='notes')return (S.notes||[]).length;if(k==='bonus')return Object.keys(S.st.fwk||{}).length+Object.keys(S.st.cbk||{}).length;const cx=S.st.cx||{};let n=0;
  for(const id in cx){const b=B[id];if(!b||id==='poings')continue;const c=b.t==='w'?'w':b.t==='a'&&b.s==='acc'?'x':b.t==='a'?'a':null;if(c===k)n+=1+(cx[id]||0)}
  const u=S.st.cxu||{};for(const id in u){const U=UNIQI[id];if(U&&((U.on==='w'&&k==='w')||(U.on==='armor'&&k==='a')))n++}return n}
 function cxMark(){if(!S.st.cxv){S.st.cxv={};for(const k of CXT)S.st.cxv[k]=cxSig(k)}return S.st.cxv}
@@ -3684,7 +3721,7 @@ function cxMark(){if(!S.st.cxv){S.st.cxv={};for(const k of CXT)S.st.cxv[k]=cxSig
 function cxdInit(){if(!S.st.cxd){const d=S.st.cxd={};codexScan();cxiInit();for(const id of Object.keys(EN))if(BEST[id]&&bestSeen(id))d['e:'+id]=bestTier(id)+1;for(const g of GENS)if(gensMet(g.id))d['g:'+g.id]=1;for(const id in(S.st.fwk||{}))d['f:'+id]=1;for(const id in(S.st.cbk||{}))d['c:'+id]=1;for(const n of(S.notes||[]))d['n:'+n]=1}return S.st.cxd}
 function cxdNew(key,v){return !SIM&&(cxdInit()[key]||0)<(v||1)}
 function cxdSee(key,v){const d=cxdInit();if((d[key]||0)<(v||1)){d[key]=v||1;save()}}
-function cxdKeys(k){if(k==='best')return Object.keys(EN).filter(id=>BEST[id]&&bestSeen(id)).map(id=>['e:'+id,bestTier(id)+1]);if(k==='gens')return GENS.filter(g=>gensMet(g.id)).map(g=>['g:'+g.id,1]);if(k==='notes')return(S.notes||[]).map(n=>['n:'+n,1]);if(k==='bonus')return[...Object.keys(S.st.fwk||{}).map(i=>['f:'+i,1]),...Object.keys(S.st.cbk||{}).map(i=>['c:'+i,1])];return[]}
+function cxdKeys(k){if(k==='guide')return Object.keys(dscKnown()).map(i=>['d:'+i,1]);if(k==='best')return Object.keys(EN).filter(id=>BEST[id]&&bestSeen(id)).map(id=>['e:'+id,bestTier(id)+1]);if(k==='gens')return GENS.filter(g=>gensMet(g.id)).map(g=>['g:'+g.id,1]);if(k==='notes')return(S.notes||[]).map(n=>['n:'+n,1]);if(k==='bonus')return[...Object.keys(S.st.fwk||{}).map(i=>['f:'+i,1]),...Object.keys(S.st.cbk||{}).map(i=>['c:'+i,1])];return[]}
 function cxNew(k){if(!CXT.includes(k)||SIM)return false;if(k==='w'||k==='a'||k==='x')return Object.keys(B).some(id=>{const b=B[id];if(id==='poings'||cxR(id)<0)return false;const c=b.t==='w'?'w':b.t==='a'&&b.s==='acc'?'x':b.t==='a'?'a':null;return c===k&&cxiNew(id)});return cxdKeys(k).some(([key,v])=>cxdNew(key,v))}
 function cxSee(k){}
 // v0.26.1 : une pastille par modèle d'arme, d'armure ou d'accessoire découvert et pas encore ouvert dans le Carnet (S.st.cxi, facultatif ; les modèles déjà connus à la première ouverture sont considérés comme vus)
@@ -3746,7 +3783,7 @@ function render(){try{tlScan()}catch(e){}try{if(S&&S.run&&RDEC[S.run.ab])rdLoad(
  _vw.innerHTML=h;_vw.dataset.tab=UI.tab;renderNav();try{const nv=document.querySelector('nav');if(nv)document.documentElement.style.setProperty('--navh',nv.offsetHeight+'px')}catch(e){}   // v0.48.0 : --navh à jour à chaque affichage (le bouton Valider collé en dépend ; avant, seulement quand une bulle s'affichait)
  for(const[c,x]of _sx){const e=[..._vw.querySelectorAll('*')].find(z=>z.className===c);if(e){const sb=e.style.scrollBehavior;e.style.scrollBehavior='auto';e.scrollLeft=x;e.style.scrollBehavior=sb}}
  $('dock').innerHTML='';dockFit();
- if(S.created&&!S.intro&&!UI.modal){UI.modal='intro';UI.introP=0}
+ if(S.created&&!S.intro&&!UI.modal){S.intro=true;save()}
  if(!SIM&&!S.created&&!(S.st&&S.st.vig)&&!UI.modal){UI.modal='vig';UI.vigP=0}
  if(!SIM&&S.created&&S.intro&&S.last&&!S.run&&!UI.modal)UI.modal='fin';
  stageSync();fitNames();fitCombat();renderModal();
@@ -3849,9 +3886,15 @@ function cmpBadge(it){
 function itemRow(it,where,extra){
  return `<button class="row" data-a="item" data-v="${it.u}">${tile(it)}<div class="grow"><div class="nm" style="color:${itemColor(it)}">${esc(itemName(it))}${it.q>1?` <span class="muted">×${it.q}</span>`:''}</div><div class="sub">${subPill(it)}${esc(itemSub(it))}</div></div>${extra!=null?extra:(where==='eq'?'':cmpBadge(it))}</button>`;
 }
+/* v0.78.0 : CAMELOTE = pièce d'équipement (pas Prototype ni mieux) moins bonne que ce que tu portes. Repliée en une ligne sur l'écran de butin, vendue en un bouton au Marché (Sac). Rien n'est jeté de force. */
+function isJunk(it){if(!it||isStack(it)||it.r>=3)return false;const p=cmpPct(it);return p!=null&&p<5}
+function lootCard(L,i){const[n,c,q,r,icn]=L;return `<div class="lcard r${r==null?'s':r}" style="animation-delay:${i*90}ms">${L[7]&&SPR['i_'+L[7]]?iic({b:L[7]},34):ic(icn||'nut',22)}<div><div class="lnm" style="color:${c}">${esc(n)}${q>1?` ×${q}`:''}</div><div class="lr">${r==null?'Consommable ou matériau':RARS[r].n}${lootExtra(L[5])}</div>${lootEq(L[5])}</div></div>`}
 function lootCards(loot){
  if(!loot||!loot.length)return '';
- return `<div class="lootgrid">${loot.map((L,i)=>{const[n,c,q,r,icn]=L;return `<div class="lcard r${r==null?'s':r}" style="animation-delay:${i*90}ms">${L[7]&&SPR['i_'+L[7]]?iic({b:L[7]},34):ic(icn||'nut',22)}<div><div class="lnm" style="color:${c}">${esc(n)}${q>1?` ×${q}`:''}</div><div class="lr">${r==null?'Consommable ou matériau':RARS[r].n}${lootExtra(L[5])}</div>${lootEq(L[5])}</div></div>`}).join('')}</div>`;
+ const isJ=L=>{if(SIM||L[5]==null)return false;const f=findItem(L[5]);return !!f&&f.where!=='eq'&&isJunk(f.it)};
+ const good=[],junk=[];loot.forEach((L,i)=>(isJ(L)?junk:good).push([L,i]));
+ const val=junk.reduce((a,[L])=>{const f=findItem(L[5]);return a+(f?sellPrice(f.it):0)},0);
+ return `<div class="lootgrid">${good.map(([L,i])=>lootCard(L,i)).join('')}</div>`+(junk.length?`<details class="junk"><summary>${junk.length} objet${junk.length>1?'s':''} sans intérêt (moins bon${junk.length>1?'s':''} que ce que tu portes) · environ ${fmt(val)} kopeks au Marché</summary><div class="lootgrid">${junk.map(([L,i])=>lootCard(L,i)).join('')}</div></details>`:'');
 }
 function lootEq(u){
  if(u==null)return '';const f=findItem(u);if(!f||isStack(f.it)||f.where==='eq')return '';
@@ -3859,19 +3902,25 @@ function lootEq(u){
  const it=f.it,cur=cmpCur(it),pct=cmpPct(it),b=B[it.b];
  const lab=b.t==='w'?(S.eq.main?'ton arme':'tes poings'):({head:'ta tête',body:'ton corps',hands:'tes mains',feet:'tes pieds',acc:'ton accessoire'}[b.s]||'ton équipement');
  let msg='';if(!cur)msg='Emplacement libre';else if(pct!=null&&pct>=5)msg=`Meilleur que ${lab} : ${pct>=999?'plus de ×10':'+'+Math.round(pct)+' %'}`;
- return msg?`<div class="eqrow"><span class="cmpd up">${msg}</span><button class="btn sm main" data-a="eq" data-v="${it.u}">Équiper</button></div>`:''}
+ return msg?`<div class="eqrow"><span class="cmpd up">${msg}</span><button class="btn sm main" data-a="eq" data-v="${it.u}">Équiper</button></div>${eqWhy(it,cur)}`:''}
+/* v0.78.0 : le bouton Équiper dit pourquoi, en une ligne (dégâts par coup, PA, coups par tour ; armure) */
+function eqWhy(it,cur){const b=B[it.b];if(!cur||b.s==='acc'&&b.t!=='w')return '';const r1=x=>(Math.round(x*10)/10).toString().replace('.',',');let t='';
+ if(b.t==='w'){const A=wCalc(it),C=wCalc(cur);t=`${Math.round(A.avg)} dégâts par coup au lieu de ${Math.round(C.avg)}`;if(A.ap!==C.ap)t+=`, ${A.ap} PA au lieu de ${C.ap}`;if(Math.abs(A.atk-C.atk)>=.05)t+=`, ${r1(A.atk)} coups par tour au lieu de ${r1(C.atk)}`}
+ else{const A=aStats(it),C=aStats(cur);t=`Armure ${A.ar} au lieu de ${C.ar}`;if(A.rr!==C.rr)t+=`, rads ${A.rr} % au lieu de ${C.rr} %`}
+ return `<div class="eqwhy">${esc(t)}.</div>`}
 function lootExtra(u){if(u==null)return '';const f=findItem(u);if(!f||isStack(f.it))return '';return attrPill(f.it)+(f.where==='eq'?'':' '+cmpBadge(f.it).replace('cmpd','cmpd sm'))}
 function lootOf(it){return[itemName(it),itemColor(it),it.q||1,isStack(it)?null:it.r,itemIcon(it),isStack(it)?null:it.u,isStack(it)?'':(LORE[it.b]||''),it.b]}
 
 function vCreate(){
- const c=UI.create||(UI.create={name:'',prof:'debiteur',at:{FOR:5,END:5,PER:5,AGI:5,INT:5,CHA:5,CHC:5}});const pf=PROFI[c.prof];
+ const c=UI.create||(UI.create={name:'',prof:'videur',at:profAt(PROFI.videur)});const pf=PROFI[c.prof];
  const left=crLeft(c.at);   // v0.47.0 : 3 points à placer (7 au plus) ; on peut baisser plusieurs attributs sous 5 (3 au plus bas) : 4 points rendus au plus (AT_GAIN)
  return `<div class="hero">${banner()}<div class="heroin"><h2>Nouveau récupérateur</h2><p>Vivograd, 2141. La dernière ville vivante. La Coopérative paie ceux qui osent descendre sous le Marché et remonter avec ce qu’ils trouvent. Choisis ton nom et un profil : il monte ses deux attributs clés à 7 et baisse deux attributs inutiles à 4. Le Débiteur et la Récidiviste te laissent tout placer toi-même. Tu peux tout retoucher, et baisser des attributs sous 5 (3 au plus bas) pour gagner jusqu’à 4 points.</p></div></div>
  <div class="card"><label class="small muted" for="nm">Ton nom</label><input type="text" id="nm" maxlength="20" value="${esc(c.name)}" placeholder="Sacha Volkov"></div>
  ${hint('Spécialise-toi : pousse deux ou trois attributs plutôt que tout un peu. À 7 puis à 10, chaque attribut débloque un palier (tout est expliqué dans Perso). Au début, Perception et Agilité aident le plus : tu touches plus souvent et tu frappes plus de fois par tour.')}
- <div class="card"><h3 style="margin:0 0 6px">Ton profil</h3><div class="pfg">${PROFILS.map(p=>`<button class="pft ${c.prof===p.id?'on':''}" data-a="cprof" data-v="${p.id}" aria-label="${esc(p.n)}">${spr('pf_'+p.id,'pfi')}<b>${esc(p.n.replace(/^(Le|La|L’) ?/,''))}</b><span>${esc(p.r)}</span></button>`).join('')}</div>${pf?`<div class="pfbig">${spr('pf_'+pf.id,'pfl')}<div class="pfd"><b>${esc(pf.n)}</b><span class="pfr">${esc(pf.r)}</span><p class="small">${esc(pf.x)}</p>${pf.free?'':`<div class="pcs">${profChips(pf)}</div>`}<p class="small muted">${esc(profLine(pf))}</p></div></div>`:''}</div>
+ <div class="card"><h3 style="margin:0 0 6px">Ton profil</h3><div class="pfg">${PROFILS.map(p=>`<button class="pft ${c.prof===p.id?'on':''}" data-a="cprof" data-v="${p.id}" aria-label="${esc(p.n)}">${p.id==='videur'?'<i class="rec">Conseillé</i>':''}${spr('pf_'+p.id,'pfi')}<b>${esc(p.n.replace(/^(Le|La|L’) ?/,''))}</b><span>${esc(p.r)}</span></button>`).join('')}</div>${pf?`<div class="pfbig">${spr('pf_'+pf.id,'pfl')}<div class="pfd"><b>${esc(pf.n)}</b><span class="pfr">${esc(pf.r)}</span>${pf.id==='videur'?'<span class="recb">Conseillé pour débuter : costaud, simple à jouer</span>':''}<p class="small">${esc(pf.x)}</p>${pf.free?'':`<div class="pcs">${profChips(pf)}</div>`}<p class="small muted">${esc(profLine(pf))}</p></div></div>`:''}</div>
  <div class="card"><div class="hrow"><h3 style="margin:0">Attributs</h3><span class="pts ${left?'':'zero'}">${left} point${left>1?'s':''}</span></div>
  ${ATTRS.map(([k,n,d])=>`<div class="attr"><div><div class="an">${n}</div><div class="small muted">${d}</div></div><div class="step"><button class="btn sm" data-a="cat" data-v="${k}" data-d="-1" aria-label="Baisser ${n}">−</button><span class="v">${c.at[k]}</span><button class="btn sm" data-a="cat" data-v="${k}" data-d="1" aria-label="Monter ${n}">+</button></div></div>`).join('')}</div>
+ <button class="btn full" data-a="help" style="margin-bottom:8px">Voir ce qui t’attend (facultatif)</button>
  <button class="btn main full big" data-a="create">${left>0?`Il reste ${left} point${left>1?'s':''} à placer`:'Entrer dans la zone'}</button>`;
 }
 /* v0.62.0 : image de Vivograd (création, Ville et Marché pendant une descente) ; l'ancien dessin vectoriel du petit rat est supprimé */
@@ -4041,7 +4090,7 @@ function vRun(){
  if(run.sc==='map'){
   const opts=run.map[run.e][run.r];const ab=abri();
   if(S.st.runs<5)h+=hint(`Choisis une salle parmi ces cartes. Chacune ajoute environ ${roomRads()} rads. ${run.r+1<ab.rows?'Les salles suivantes restent cachées.':run.e<ab.et-1?'Après celle-ci, le monte-charge te proposera de remonter.':''}`);
-  h+=bossDoor(run);if(countOf('colis')+countOf('colisd')>0)h+=tipCard('colis');if(run.df&&run.df.length)h+=tipCard('df');h+=dfChips();
+  if(run.map[run.e][run.r].length>1)dscSee('room');h+=bossDoor(run);if(countOf('colis')+countOf('colisd')>0)h+=tipCard('colis');if(run.df&&run.df.length)h+=tipCard('df');h+=dfChips();
   h+=`<div class="pickh"><h2>Choisis ta salle</h2><span>Étage ${run.e+1}, salle ${run.r+1}/${ab.rows}</span></div>`;
   h+=`<div class="rooms n${opts.length}">${opts.map((t,i)=>{const m=RMETA[t];return `<button class="rcard ${t}" data-a="room" data-v="${i}">${(k=>k?`<span class="rb" data-r="${k}"><span class="pc">${rpic(t,26)}</span></span>`:`<span class="rico">${ic(m.i,30)}</span>`)(rdecFor(t,rvOf(run.e,run.r,i)))}<b>${t==='event'&&pal('PER')>=1?esc(evPeek(i).t):ROOMS[t].n}</b><span class="rd">${t==='event'&&pal('PER')>=1?'Repérage : tu sais ce qui t’attend.':m.d}</span><span class="rp">Risque ${pips(m.risk,'risk')}</span><span class="rp">Butin ${pips(m.loot,'loot')}</span><span class="go">Entrer</span></button>`}).join('')}</div>`;
   if(runPrep('scout')&&run.r+1<ab.rows){const nx=run.map[run.e][run.r+1];h+=`<p class="small muted" style="margin:8px 2px">${ic('eye',14)} Plan du cheminot, rangée suivante : ${nx.map(t=>ROOMS[t].n.toLowerCase()).join(', ')}.</p>`}
@@ -4058,10 +4107,10 @@ function vRun(){
    const poor=o.cost&&S.kop<o.cost;
    return `<button class="btn full ${i===0?'main':''} ${miss||poor?'off':''}" data-a="evo" data-v="${i}"><span>${esc(o.l)}</span>${c!=null?`<span class="chance">${c} % · ${what}</span>`:''}${o.req?`<span class="chance">tu en as ${countOf(o.req)}</span>`:''}${o.cost?`<span class="chance">${o.cost} kopeks, tu en as ${fmt(S.kop)}</span>`:''}</button>`}).join('')}</div></div>${vLog()}`;
  }else if(run.sc==='lift'){
-  const bagV=run.bag.reduce((s,it)=>s+itemValue(it)*(it.q||1),0);
+  const bagV=run.bag.reduce((s,it)=>s+itemValue(it)*(it.q||1),0);dscSee('lift');
   const ab=abri(),noLift=!liftOk(ab,run.e),nxt=(()=>{for(let e2=run.e+1;e2<ab.et-1;e2++)if(liftOk(ab,e2))return e2+1;return 0})();
   h+=`<div class="card evc"><div class="ctitle">${ic('lift',30)}<h2>${ab.up?'Palier':'Monte-charge'}</h2></div><p>L’étage ${run.e+1} est derrière toi. ${noLift?'Pas d’ascenseur de service ici. Il faut continuer à monter.':'C’est le moment de choisir.'}</p>
-  ${liftBilan(run)}${bossWarn(run,ab,noLift)}
+  ${rodLift(run)}${liftBilan(run)}${bossWarn(run,ab,noLift)}
   <div class="choice">${noLift?`<div class="ccard safe" style="opacity:.45">${ic('x',28)}<b>Pas de sortie</b><span>${nxt?'Prochain ascenseur : après l’étage '+nxt+'.':'Plus d’ascenseur avant le boss.'}</span></div>`:`<button class="ccard safe" data-a="extract">${ctop('remonter',remV(run),ic(ab.up?'down':'up',28))}<b>${ab.up?'Prendre l’ascenseur':'Remonter'}</b><span>Tu gardes ton sac : ${run.bag.length} objet${run.bag.length>1?'s':''}, environ ${fmt(bagV+run.kop)} kopeks.</span></button>`}
   <button class="ccard risk" data-a="descend">${ctop('descendre',run.e,ic(ab.up?'up':'down',28))}<b>Étage ${run.e+2}${run.vn===run.e+1?' (inondé)':''}${svAt(run.e+1)?' (surchauffe)':''}</b><span>Ennemis plus forts, meilleur butin, ${radsAt(run.e+1)} rads par salle. Si tu meurs, tu perds tout le sac.</span></button></div>${(x=>x?'<div class="infnext">Avant de choisir, si tu veux :</div>'+x:'')(infCard(run,ab)+vanneCard(run,ab)+auroraCards(run,ab))}</div>
   ${vLog()}${woundCard()}<div class="card"><h3 style="margin-top:0">Te soigner avant de choisir</h3>${quickUse(false)}</div>`;
@@ -4320,8 +4369,8 @@ function vPerso0(){
   h+=`<div class="card">${S.st.runs<5?hint('Elles montent quand tu t’en sers : tirer, frapper, crocheter, fouiller, soigner, vendre, démonter. La base vient de tes attributs.'):''}${Object.entries(SK).map(([k,[n]])=>{const s=S.skx[k]||{p:0,x:0};const full=s.p>=skCap();return `<div class="skl2 clk" data-a="pinfo" data-v="sk:${k}"><span>${n}${s.p?`<span class="gain">+${s.p}</span>`:''}</span><b>${skill(k)}</b><span class="skx"><i style="width:${full?100:Math.round(s.x/skNeed(s.p)*100)}%"></i></span></div>${pbub('sk:'+k)}`}).join('')}</div>`;
  }else{
   h+=`<div class="cstrip">${[['up','descentes',S.st.runs],['crown','boss',S.st.boss],['swords','tués',S.st.kills],['skull','morts',S.st.deaths]].map(([i,l,v])=>`<span>${ic(i,16)}<b>${v}</b><i>${l}</i></span>`).join('')}</div>`;
-  const CT=UI.ctab||'best';h+=`<div class="itabs p6" role="tablist" style="margin-top:10px">${[['best','Bestiaire','skull'],['gens','Gens','man'],['w','Armes','gun'],['a','Armures','vest'],['x','Access.','ring'],['bonus','Bonus','bolt'],['fac','Factions','crown'],['notes','Notes','note']].map(([k,l,i])=>`<button class="itab ${CT===k?'on':''}" data-a="ctab" data-v="${k}">${ic(i,20)}<span>${l}</span>${cxNew(k)?'<i class="dot2"></i>':''}</button>`).join('')}</div>`;
-  if(CT==='best')h+=vBest();else if(CT==='gens')h+=vGens();else if(CT!=='notes')h+=vCodex(CT);else{
+  const CT=UI.ctab||'best';h+=`<div class="itabs p6" role="tablist" style="margin-top:10px">${[['best','Bestiaire','skull'],['gens','Gens','man'],['w','Armes','gun'],['a','Armures','vest'],['x','Access.','ring'],['bonus','Bonus','bolt'],['fac','Factions','crown'],['notes','Notes','note'],['guide','Guide','target']].map(([k,l,i])=>`<button class="itab ${CT===k?'on':''}" data-a="ctab" data-v="${k}">${ic(i,20)}<span>${l}</span>${cxNew(k)?'<i class="dot2"></i>':''}</button>`).join('')}</div>`;
+  if(CT==='best')h+=vBest();else if(CT==='gens')h+=vGens();else if(CT==='guide')h+=vGuide();else if(CT!=='notes')h+=vCodex(CT);else{
   h+=`<div class="secth"><h3>Notes trouvées</h3><span class="small muted">${S.notes.length}/${NOTES.length}</span></div>`;
   h+=S.notes.length?`<div class="list compact">${NOTES.filter(n=>S.notes.includes(n.id)).map(n=>`<button class="row" data-a="note" data-v="${n.id}" style="position:relative">${cxdNew('n:'+n.id)?'<i class="nwd" style="top:6px;right:6px"></i>':''}${ic('note',20)}<div class="grow"><div class="nm">${esc(n.t)}</div></div></button>`).join('')}</div>`:`<div class="card muted small">Les fouilles cachent parfois des papiers oubliés. Ils atterrissent ici, et tu les gardes même si tu meurs.</div>`;}
  }
@@ -5338,7 +5387,7 @@ function selfTest(){const keep=JSON.stringify(S),ui={tab:UI.tab,modal:UI.modal,c
    S.en=900;startRun('lenine');let r=S.run;S.at.END=10;dirty();S.hp=5;hurt(500);ck('palier Increvable : 1 PV une fois par descente',S.run&&S.hp===1&&S.run.incA,[S.hp]);
    S.hp=hpMax();S.at.INT=10;dirty();r.sc='map';r.map[r.e][r.r]=['terminal'];enterRoom(0);ck('palier Génie soviétique : terminal ouvert',S.run&&S.run.sc==='ev'&&S.run.ev.t==='Accès autorisé',S.run&&S.run.sc);
    r.sc='map';r.ev=null;S.at.PER=7;dirty();r.map[r.e][r.r]=['event'];const pe=evPeek(0);enterRoom(0);ck('palier Repérage : l’événement annoncé est le bon',S.run&&S.run.ev&&S.run.ev.t===pe.t,[pe.t,S.run&&S.run.ev&&S.run.ev.t]);
-   r.sc='map';r.ev={kx:0};S.at.CHC=7;dirty();let nl=9;for(let i=0;i<6;i++){r.sc='ev';r.ev={kx:0};EVH.cof_ok();nl=Math.min(nl,(S.run.ev.loot||[]).length)}ck('palier Veinard : au moins 3 objets par coffre',nl>=3,nl);
+   r.sc='map';r.ev={kx:0};S.at.CHC=7;dirty();let nl=9;for(let i=0;i<6;i++){r.sc='ev';r.ev={kx:0};EVH.cof_ok();nl=Math.min(nl,(S.run.ev.loot||[]).length)}ck('palier Veinard : un objet de plus par coffre (au moins 2 au Parking depuis la v0.78.0)',nl>=PK_LOOT.cof[0]+1,nl);
    r.sc='map';S.at.PER=10;dirty();startCombat([mkEnemy('rat',1)]);ck('palier Tireur d’élite : le tir visé touche toujours',hitChance(target(),true)===100&&hitChance(target(),false)<100,0);
    ck('paliers : affichage dans Perso',/Costaud/.test(palChips('FOR'))&&/Jackpot/.test(palTxt('CHC')),0);S.run=null;
   });
@@ -5431,6 +5480,24 @@ function selfTest(){const keep=JSON.stringify(S),ui={tab:UI.tab,modal:UI.modal,c
    ck('gros coup annoncé : Soudeur, Conducteur, Pompe Funèbre, Grand Bouchon',['mecano','conducteur','concierge','president'].every(id=>EN[id].ai==='wind'&&EN[id].bn&&CHARGEX[id]),0);
    ck('Pactes : Ligne 2, Hôpital et Station',['ligne2','iode','kova'].every(id=>ABRIS.find(a=>a.id===id).pacts),0);
    ck('Pactes : pas au Parking ni à Aurora',!ABRIS.find(a=>a.id==='lenine').pacts&&!ABRIS.find(a=>a.id==='aurora').pacts,0)});
+  t('Premier contact (v0.78.0)',()=>{fresh();S.st.runs=0;S.st.deaths=0;S.st.bk={lenine:1};dirty();SIM=0;try{
+   startRun('lenine');const r=S.run;
+   ck('rodage : la première descente est écrite à la main (1 seule carte par salle, rat seul, caisse, repos)',!!r.rod&&r.map[0].every(o=>o.length===1)&&r.map[0][0][0]==='combat'&&r.map[0][1][0]==='coffre'&&r.map[1].every(o=>o.length===1),0);
+   ck('rodage : pas de défis, pas de Fourgueur, pas de Coup de fouet',!r.df&&!r.fg&&!disc('fw'),0);
+   enterRoom(0);ck('rodage : le premier combat est un rat seul',!!r.cb&&r.cb.en.length===1&&r.cb.en[0].id==='rat',0);
+   r.cb=null;r.sc='map';r.r=1;enterRoom(0);const wcur=cmpCur({b:'pm9'});
+   ck('rodage : la caisse mène à un bouton unique',r.sc==='ev'&&r.ev.o.length===1&&r.ev.o[0].go==='cof_ok',0);
+   evOpt(0);const g=r.ev.loot&&r.ev.loot.length?findItem(r.ev.loot[0][5]):null;
+   ck('rodage : l’arme de la caisse est meilleure que celle portée',!!g&&B[g.it.b].t==='w'&&cmpPct(g.it)>=5,g&&cmpPct(g.it));
+   ck('Équiper explique en une ligne (dégâts par coup)',/class="eqwhy"/.test(lootCards(r.ev.loot))&&/dégâts par coup au lieu de/.test(lootCards(r.ev.loot)),0);
+   ck('guide : 1re découverte rangée, le reste en ???',!!S.st.dsc&&!!S.st.dsc.rod&&/\?\?\?/.test(vGuide()),0);
+   S.run=null;S.st.runs=1;startRun('lenine');ck('descente 2 : plus de rodage',!S.run.rod&&S.run.map[0].some(o=>o.length>1),0);S.run=null;
+   S.st.runs=2;ck('calendrier : Fourgueur à la descente 3, pas encore de fouet',disc('fg')&&!disc('fw'),0);S.st.runs=3;ck('calendrier : fouet à la descente 4',disc('fw'),0);
+   S.st.runs=3;ck('calendrier : défis et Roi des Rats seulement après le boss du Parking',!disc('df')&&!disc('nem'),0);S.st.bkd={lenine:1};ck('calendrier : défis et Roi ouverts après le boss',disc('df')&&disc('nem'),0);S.st.bkd={};
+   S.st.runs=20;ck('calendrier : vieille partie, tout ouvert',disc('df')&&disc('fw')&&disc('fg')&&disc('nem'),0);
+   const w1=mkGear('pm9',1,0,1);S.eq.main=mkGear('pm9',5,3,1);S.inv=[w1];ck('camelote : un objet moins bon que le porté en fait partie, Tout vendre la vend',isJunk(w1)&&junkList().length===1,0);
+   const k0=S.kop;ACT.bjunk();ck('camelote vendue : kopeks gagnés, sac vidé',S.kop>k0&&!S.inv.length,0);
+  }finally{SIM=1}});
   t('Colis, Fourgueur, rat, défis (v0.20.0)',()=>{fresh();S.st.bk={lenine:1};S.en=900;S.lvl=10;S.st.runs=3;dirty();
    addTo(S.inv,mkStack('colis',1));colisOpen('colis');const c1=UI.colis&&findItem(UI.colis.u);ck('colis : s’ouvre à la surface, au moins Modifié, à ton niveau + 1 (v0.77.0)',!!c1&&c1.it.r>=2&&c1.it.l===11&&UI.modal==='colis',c1&&[c1.it.r,c1.it.l]);
    ck('colis : l’écran d’ouverture s’affiche',/colbox/.test(colisModal()),0);UI.modal=null;UI.colis=null;
@@ -5448,7 +5515,7 @@ function selfTest(){const keep=JSON.stringify(S),ui={tab:UI.tab,modal:UI.modal,c
    SIM=0;try{S.st.cxd={};(S.st.seen||(S.st.seen={})).patient0=1;ck('carnet : un ennemi vu allume Bestiaire et sa pastille',cxNew('best')&&/class="nwd"/.test(vBest().split('<button class="row').find(s=>s.includes('data-v="patient0"'))||''),0);ACT.beast('patient0');UI.modal=null;ck('carnet : toucher l’ennemi éteint sa pastille',!cxNew('best'),0);ck('carnet : un palier de plus rallume la pastille',(()=>{const k=S.st.kb||(S.st.kb={}),k0=k.patient0;k.patient0=(k0||0)+99;const r=cxNew('best');k.patient0=k0;return r})(),0)}finally{SIM=1}
    SIM=0;try{codexSee(mkGear('tuyau',10,4));S.st.cxi=S.st.cxi||{};delete S.st.cxi.tuyau;ck('carnet : une arme découverte allume Armes',cxNew('w')&&!cxNew('a'),0)}finally{SIM=1}
    addTo(S.inv,mkStack('colis',1));colisOpen('colis');const hm=colisModal();ck('colis : la fiche montre les stats et la phrase de l’objet',/kv/.test(hm)&&(!LORE[findItem(UI.colis.u).it.b]||/flav/.test(hm)),0);UI.modal=null;UI.colis=null});
-  t('Coup de fouet, combos, Pactes après élite, prochain cadeau (v0.21.0)',()=>{fresh();S.st.bk={lenine:1,ligne2:1};S.en=900;S.lvl=9;dirty();startRun('ligne2');const r=S.run;
+  t('Coup de fouet, combos, Pactes après élite, prochain cadeau (v0.21.0)',()=>{fresh();S.st.runs=DISC_OLD;S.st.bk={lenine:1,ligne2:1};S.en=900;S.lvl=9;dirty();startRun('ligne2');const r=S.run;
    r.e=1;r.sc='lift';SIM=0;try{descend()}finally{SIM=1}ck('coup de fouet : 3 cartes en arrivant à l’étage 3',r.sc==='fw'&&r.fwo&&r.fwo.opts.length===3&&new Set(r.fwo.opts).size===3,[r.sc,r.fwo]);
    ck('coup de fouet : l’écran s’affiche',/Coup de fouet/.test(vRun()),0);const pa0=PA();r.fwo.opts[0]='pa';fwPick(0);ck('coup de fouet : Adrénaline = +1 PA, retour à la carte',PA()===pa0+1&&r.sc==='map'&&fwChips().includes('Adrénaline'),[PA(),pa0,r.sc]);
    r.e=2;r.sc='lift';SIM=0;try{descend()}finally{SIM=1}ck('coup de fouet : rien à l’étage 4',r.sc!=='fw',r.sc);
@@ -5679,7 +5746,7 @@ function vOptions(){
  let h=jlCard()+diffCard()+`<div class="card"><div class="hrow"><div><h2 style="margin:0">Double validation</h2><p class="small muted" style="margin:4px 0 0">Descendre, choisir une salle, agir en combat ou dans un événement : un premier toucher sélectionne, un second valide.</p></div><button class="btn sm ${confOn()?'main':''}" data-a="conft">${confOn()?'Activée':'Désactivée'}</button></div></div>`;
  h+=`<div class="card"><h2>Taille de l’interface</h2><p class="small muted">Plus petit, tu vois plus de choses sans faire défiler.</p><div class="grid3z">${[[100,'Grande'],[90,'Normale'],[80,'Compacte']].map(([z,l])=>`<button class="btn ${uiZoom()===z?'main':''}" data-a="zoom" data-v="${z}">${l}<span class="small" style="display:block;opacity:.75">${z} %</span></button>`).join('')}</div></div>`;
  h+=`<div class="card"><h2>Conseils</h2><p class="small muted">Les cartes d’explication (Coup de fouet, Pactes, Colis, défis) ne s’affichent qu’une fois. Pour les revoir :</p><button class="btn full" data-a="tipreset">Revoir les conseils</button></div>`;
- h+=`<div class="card"><h2>Leçons</h2><p class="small muted">Les leçons du début : descente, combat, butin, spécialisation, niveaux, ville.</p><button class="btn full" data-a="help">Revoir les leçons</button></div>`;
+ h+=`<div class="card"><h2>Leçons</h2><p class="small muted">Les leçons du début, et tes découvertes au fil des descentes.</p><button class="btn full" data-a="guide">Ouvrir le Guide du Carnet</button></div>`;
  h+=`<div class="card"><h2>Sauvegarde</h2><p class="small muted">Le jeu se sauvegarde tout seul dans ce navigateur. Exporte un code de temps en temps : c’est ta seule copie si le navigateur efface ses données.</p>
  <button class="btn full" data-a="exp">Générer le code de sauvegarde</button>${UI.exp?`<textarea readonly id="expt" style="margin-top:8px">${UI.exp}</textarea><button class="btn sm" style="margin-top:6px" data-a="copy">Copier</button>`:''}
  <div class="hr"></div><label class="small muted" for="impt">Coller un code pour le charger</label><textarea id="impt"></textarea><button class="btn full" style="margin-top:6px" data-a="imp">Charger ce code</button></div>`;
@@ -5870,6 +5937,7 @@ const ACT={
  colis:()=>colisNext(),colnext:()=>colisNext(),coleq:()=>{const c=UI.colis;if(c){equip(c.u);UI.colis.eq=1}save();render()},bok:()=>{UI.modal=null;UI.bint=null;UI.bintH=null;render()},colok:()=>{UI.modal=UI.colisBack||null;UI.colisBack=null;UI.colis=null;save();render()},
  noop:()=>{},finok:()=>{finClose();UI.tab='zone';render();window.scrollTo(0,0)},finvgo:v=>{finClose();ACT.vgo(v)},finchr:()=>{finClose();ACT.chron()},chron:()=>{S.st.chs=chrN();save();UI.modal='chron';render()},path:()=>{UI.modal='path';renderModal()},vsee:v=>{vSee(v);render()},vunx:v=>{UI.vunO=UI.vunO===v?null:v;render()},vungo:v=>{vSee(v);ACT.vgo(v)},
  help:()=>{UI.modal='intro';UI.introP=0;renderModal()},
+ guide:()=>{UI.modal=null;UI.tab='perso';UI.ptab='carnet';UI.ctab='guide';render();window.scrollTo(0,0)},
  introprev:()=>{UI.introP=Math.max(0,(UI.introP||0)-1);renderModal()},
  intronext:()=>{if((UI.introP||0)>=INTRO.length-1){S.intro=true;UI.modal=null;save();renderModal()}else{UI.introP=(UI.introP||0)+1;renderModal()}},
  introskip:()=>{S.intro=true;UI.modal=null;save();renderModal()},
@@ -5904,7 +5972,7 @@ const ACT={
  use:v=>{const fight=!!(S.run&&S.run.cb);useItem(v,fight);if(fight){checkEnd();save();render()}},
  item:v=>{UI.modal=+v;renderModal()},
  close:()=>{UI.modal=null;renderModal()},
- eq:(v,el)=>{const s=el.dataset.s;equip(+v,s||null)},
+ eq:(v,el)=>{const s=el.dataset.s;dscSee('equip');equip(+v,s||null)},
  uneq:v=>unequip(v),
  sell:v=>sell(+v,false),
  radio:()=>{UI.rOpen=!UI.rOpen;render()},
@@ -5913,6 +5981,7 @@ const ACT={
  feco:()=>{if(S.run)return;const n=S.st.fe||0;if(n>=FEUIL.length||nDesc()<feAt(n))return;UI.feFull=false;S.st.fe=n+1;const L=feReward(n+1);UI.feShow=n;UI.feRw=L;toast('Épisode '+(n+1)+'/'+FEUIL.length+' : '+L.join(', '));save();render()},
  fere:v=>{if(S.run)return;UI.feShow=+v;UI.feRw=null;render()},
  sellall:v=>sell(+v,true),
+ bjunk:()=>{const n=junkList().length;if(!n)return toast('Pas de camelote.');sellWhere(isJunk,`Camelote vendue (${n})`)},
  sellmats:()=>sellWhere(it=>B[it.b].t==='m','Matériaux vendus'),
  buy:v=>buy(v,false),
  buyg:v=>buy(v,true),
@@ -5953,7 +6022,7 @@ const ACT={
  reset:()=>{if(UI.confirm!=='reset'){UI.confirm='reset';render();return}try{localStorage.removeItem(SAVE_KEY)}catch(e){}S=freshState();uiClear();UI.confirm=null;UI.tab='zone';UI.exp=null;UI.modal=null;render()}
 };
 /* --- double validation (v0.6.5) : 1er toucher = sélection, 2e = validation --- */
-const CONF_A=['fuse','run','room','atk','aim','cov','talk','flee','end','auto','evo','extract','evac','pact','fw','forge','wup','wre','wrar','wcal','craft','descend','perk','growpick','spend','atval','use','sell','sellall','scrap','bsell','bscrap','sellmats','scraprust','crewsend','crewhire','crewfire','crewtrain','crewgear','job','jobstop','ctrtake','ctrdrop','ctrreroll','facdon'];
+const CONF_A=['fuse','run','room','atk','aim','cov','talk','flee','end','auto','evo','extract','evac','pact','fw','forge','wup','wre','wrar','wcal','craft','descend','perk','growpick','spend','atval','use','sell','sellall','scrap','bsell','bscrap','bjunk','sellmats','scraprust','crewsend','crewhire','crewfire','crewtrain','crewgear','job','jobstop','ctrtake','ctrdrop','ctrreroll','facdon'];
 let ARM=null,ARMT=0;
 function confOn(){return !S||S.confirm!==false}
 function disarm(){if(ARM){ARM.classList.remove('armed');if(ARM._t!=null){ARM.innerHTML=ARM._t;ARM._t=null}ARM=null}clearTimeout(ARMT)}
