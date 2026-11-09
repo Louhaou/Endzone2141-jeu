@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Endzone 2141 v0.79.0</title>
+<title>Endzone 2141 v0.80.1</title>
 <!--APERCU DU LIEN v0.77.1 : carte affichée par Discord, WhatsApp, Messenger quand on partage le lien (image apercu.jpg à côté de index.html dans Endzone2141-jeu, fabriquée par tools/apercu_lien.py)-->
 <meta name="description" content="Descends dans les abris irradiés de Vivograd, loote, remonte vivant. RPG post-apo à l'humour noir, gratuit, sur téléphone, sans installation.">
 <meta name="theme-color" content="#ff3d8b">
@@ -318,7 +318,7 @@ nav button.on .ic{filter:drop-shadow(0 0 6px rgba(255,63,164,.7))}
 .list.compact .tile .ic{width:20px;height:20px}
 .list.compact .nm{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .list.compact .sub{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pft{position:relative}.pft .rec{position:absolute;top:3px;right:3px;font-style:normal;font-size:10px;font-weight:700;padding:1px 5px;border-radius:8px;background:var(--pink);color:#12081c;z-index:2}.recb{display:block;font-size:12px;font-weight:700;color:var(--pink);margin:2px 0}.retr{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid var(--line)}.retr.ok{opacity:.55}.retk{width:18px;text-align:center;color:var(--pink);font-weight:700}.card.ret .retr b{font-size:14px}.junk{margin:8px 0;border:1px dashed var(--line);border-radius:10px;padding:6px 10px}.junk summary{cursor:pointer;font-size:12.5px;color:var(--mute);list-style:none}.junk[open] summary{margin-bottom:6px}.eqwhy{font-size:12px;color:var(--mute);margin-top:3px;line-height:1.3}.cmpd{white-space:nowrap;flex:none;min-width:50px;text-align:center;padding:4px 7px;border-radius:999px;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+.pft{position:relative}.pft .rec{position:absolute;top:3px;right:3px;font-style:normal;font-size:10px;font-weight:700;padding:1px 5px;border-radius:8px;background:var(--pink);color:#12081c;z-index:2}.recb{display:block;font-size:12px;font-weight:700;color:var(--pink);margin:2px 0}.more{margin:6px 0 0}.more summary{cursor:pointer;font-size:13px;color:var(--pink)}.retr{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid var(--line)}.retr.ok{opacity:.55}.retk{width:18px;text-align:center;color:var(--pink);font-weight:700}.card.ret .retr b{font-size:14px}.junk{margin:8px 0;border:1px dashed var(--line);border-radius:10px;padding:6px 10px}.junk summary{cursor:pointer;font-size:12.5px;color:var(--mute);list-style:none}.junk[open] summary{margin-bottom:6px}.eqwhy{font-size:12px;color:var(--mute);margin-top:3px;line-height:1.3}.cmpd{white-space:nowrap;flex:none;min-width:50px;text-align:center;padding:4px 7px;border-radius:999px;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
 .cmpd.up{background:rgba(98,227,138,.15);color:var(--good)}.cmpd.down{background:rgba(255,90,100,.12);color:var(--blood)}.cmpd.eq{color:var(--mute);background:var(--panel2)}.cmpd.new{background:rgba(98,227,138,.15);color:var(--good);font-size:12px}
 .lr .cmpd{min-width:0;padding:1px 6px;font-size:11px;margin-left:4px}
 .list.compact .cmpd{min-width:44px;font-size:12px;padding:3px 6px}
@@ -901,7 +901,7 @@ nav .dot{position:absolute;top:5px;left:calc(50% + 7px);width:9px;height:9px;bor
  Fin du fichier : démarrage (load, awayCheck) puis render().
 ============================================================================ */
 'use strict';
-const VERSION='0.79.0';
+const VERSION='0.80.1';
 // Niveau maximum du personnage (v0.12.12, décision du joueur du 24/10/2026 : 40, atteint en environ 10 h sans auto-combat ; extensible). Tranches des abris : voir ABRIS (lv, lvl) et docs/GDD.md.
 const LVMAX=40;
 // Dégâts minimum d'un coup ennemi, en part du coup brut (v0.12.13, décision liée au journal #8 du joueur) : l'armure et la réduction fixe ne peuvent plus ramener un coup à 1 PV. Ne touche pas les persos peu armés.
@@ -2415,7 +2415,7 @@ function startRun(id){
  const ab=ABRIS.find(a=>a.id===id);if(!ab||ab.lock)return;
  if(!bossOk(ab))return toast(`${gateTxt(ab)}, au fond de : ${ABRIS.find(a=>a.id===ab.needBoss).n}.`);
  dirty();
- UI.tip=null;S.run={ab:id,pacts:[],e:0,r:0,map:genMap(ab),bag:[],kop:0,sc:'map',cb:null,ev:null,log:[],iod:0,rev:false,pend:0,kills:0,path:[],pr:S.prep||{},r0:S.rads};S.prep={};if(!SIM&&id==='lenine'&&nDesc()===0){S.run.rod=1;rodMap(S.run.map);dscSee('rod')}fgPlace();if(disc('df'))dfPick();
+ UI.tip=null;S.run={ab:id,pacts:[],e:0,r:0,map:genMap(ab),bag:[],kop:0,sc:'map',cb:null,ev:null,log:[],iod:0,rev:false,pend:0,kills:0,path:[],pr:S.prep||{},r0:S.rads};S.prep={};if(!SIM&&id==='lenine'&&nDesc()===0){S.run.rod=1;rodMap(S.run.map);dscSee('rod');dscSee('but')}fgPlace();if(disc('df'))dfPick();
  if(S.run.pr.dope){S.rads=Math.min(999,S.rads+40);S.hp=Math.round(S.hp*1.1)}
  if(S.run.pr.bnt)S.run.bnt={k:S.run.pr.bnt,done:false};
  S.last=null;quest('q1');if(overLv(ab))log('Cet abri est trop facile pour toi : kopeks et XP des ennemis divisés par deux.','mute');
@@ -2913,14 +2913,16 @@ const DISC_N={fg:2,fw:3},DISC_OLD=8;
 const PK_LOOT={cof:[1,2],fo:.15};
 function bossKilled(){return !!(S.st&&S.st.bkd&&S.st.bkd.lenine)}
 function disc(k){if(SIM||!S||!S.st)return true;const n=nDesc();if(n>=DISC_OLD)return true;if(k==='df'||k==='nem')return bossKilled();return n>=(DISC_N[k]||0)}
+function rodBasic(){return !!(S&&S.run&&S.run.rod&&S.run.e===0)}
 function rodOn(){return !!(S&&S.run&&S.run.rod)}
-const ROD_GLEB=['« Ici Gleb, du Marché. Premier étage : un rat. Ça mord, ça court, ça meurt. Fais dans l’ordre. »','« Étage deux. Ouvre la caisse, prends ce qui brille, et lis ce que dit le bouton avant de toucher. »','« Le monte-charge, c’est la sortie. Remonte avec ton sac et il est à toi. Meurs et il est à moi. »'];
+const ROD_GLEB=['« Ici Gleb, du Marché. Premier étage : un rat. Touche Attaquer jusqu’à ce qu’il arrête de bouger. Je ne rembourse pas. »','« Étage deux. Ouvre la caisse, prends ce qui brille, et lis ce que dit le bouton avant de toucher. »','« Le monte-charge, c’est la sortie. Remonte avec ton sac et il est à toi. Meurs et il est à moi. »'];
 function rodFoes(){const run=S.run;if(run.e===0)return [mkEnemy('rat',enemyLv('rat'))];return rollGroup(false).slice(0,1)}
-function rodGear(){let it=null;for(let i=0;i<80;i++){const c=randomLoot(ilvl(),{e:0,gear:true,min:2,force:2});if(B[c.b].t!=='w')continue;it=c;const p=cmpPct(c);if(p!=null&&p>=20&&p<=200)break}return it||randomLoot(ilvl(),{e:0,gear:true,min:2})}
+function rodGear(){let it=null,bp=-1e9;for(let i=0;i<200;i++){const c=randomLoot(ilvl(),{e:0,gear:true,min:2,force:2});if(B[c.b].t!=='w')continue;const p=cmpPct(c);if(p!=null&&p>=20&&p<=200){it=c;break}if(p!=null&&p>bp){bp=p;it=c}}return it||randomLoot(ilvl(),{e:0,gear:true,min:2})}
 function rodMap(map){map[0]=[['combat'],['coffre'],['repos']];map[1]=[['combat'],['fouille'],['repos']]}
 function rodLift(run){if(!run.rod||run.e!==1)return '';return `<div class="card tipc"><b>La règle d’or</b><p>Remonter, c’est garder ton sac : tout ce que tu as ramassé est à toi. Mourir, c’est tout perdre. Descendre plus bas rapporte plus, mais rien ne t’y oblige. Ta première descente est faite : remonte quand tu veux.</p></div>`}
 /* GUIDE du Carnet (v0.78.0, choix du joueur : les leçons du début ne sont pas supprimées) : « Les leçons du Bureau » + « Tes découvertes » (chaque carte d'apprentissage vue en jeu s'y range dans l'ordre ; ??? tant qu'elle n'est pas arrivée). S.st.dsc = {clé: rang} (facultatif, pas de migration). */
 const DSC=[['rod','Ta première descente','Un rat, une caisse, un monte-charge. Gleb te guide à la radio. Une seule chose à apprendre par étage.','descente 1'],
+ ['but','Ton but','Tuer le boss de chaque abri ouvre le suivant : Parking Lénine, Ligne 2, Hôpital, Station, Centrale Aurora-4. Tu montes en niveau en descendant, et tu reviens plus fort.','ta première descente'],
  ['equip','Équiper un objet','Un objet marqué « Meilleur que… » te rend plus fort tout de suite. Le bouton Équiper dit pourquoi : dégâts par coup, PA, coups par tour. Ce que tu portes est à l’abri si tu meurs, le sac non.','ton premier coffre'],
  ['stats','Lire les chiffres d’un objet','Dégâts par coup, PA, coups par tour : vert = mieux que ce que tu portes, rouge = moins bien. Plus de PA, c’est moins d’attaques par tour. Touche un objet pour la fiche complète.','ton premier coffre'],
  ['ret','Ton premier retour en ville','Remonté vivant, le sac est à toi. Vends ce qui est moins bon que ton équipement, achète une Trousse au Comptoir, puis redescends.','ta première remontée'],
@@ -2940,15 +2942,18 @@ function vGuide(){const d=dscKnown();
  const known=DSC.filter(x=>d[x[0]]).sort((a,b)=>d[a[0]]-d[b[0]]),unk=DSC.filter(x=>!d[x[0]]);
  h+=known.map(x=>`<button class="card dsc" data-a="cxd" data-v="d:${x[0]}" style="position:relative;text-align:left;width:100%">${cxdNew('d:'+x[0])?'<i class="nwd" style="top:8px;right:8px"></i>':''}<b>${esc(x[1])}</b><p class="small" style="margin:4px 0 0">${esc(x[2])}</p></button>`).join('');
  h+=unk.map(x=>`<div class="card dsc muted"><b>???</b><p class="small" style="margin:4px 0 0">À découvrir : ${esc(x[3])}.</p></div>`).join('');
+ h+=`<div class="secth"><h3>Aide des écrans</h3><span class="small muted">${Object.keys(GUIDE).length}</span></div>`+Object.keys(GUIDE).map(k=>`<details class="card dsc"><summary style="cursor:pointer"><b>${esc(GUIDE[k][0])}</b></summary><p class="small" style="margin:6px 0 0">${GUIDE[k][1]}</p></details>`).join('');
  return h}
 /* PREMIER RETOUR EN VILLE (v0.79.0, temps 3 du plan Premier contact) : après la 1re et la 2e remontée, une carte en tête de la Zone dit quoi faire en surface : vendre la camelote (Sac) et acheter une Trousse (Comptoir). S.st.ret = {v: vendu, a: acheté, x: fermée} (facultatif). */
 function retOn(){return !SIM&&!!S&&!S.run&&!!S.created&&nDesc()>=1&&nDesc()<=2&&!(S.st.ret&&(S.st.ret.x||(S.st.ret.v&&S.st.ret.a)))}
 function retSee(k){if(SIM||!S||!S.st)return;const r=S.st.ret||(S.st.ret={});r[k]=1}
 function retCard(){if(!retOn())return '';dscSee('ret');const r=S.st.ret||{};const J=junkList(),jv=J.reduce((a,it)=>a+sellPrice(it),0);
  const row=(ok,t,d,go,b)=>`<div class="retr${ok?' ok':''}"><span class="retk">${ok?'✓':'•'}</span><div class="grow"><b>${esc(t)}</b><div class="small muted">${esc(d)}</div></div>${ok?'':`<button class="btn sm main" data-a="retgo" data-v="${go}">${b}</button>`}</div>`;
- return `<div class="card tipc ret"><div class="hrow"><b class="grow">Premier retour en ville</b><button class="btn sm" data-a="retx" aria-label="Fermer">${ic('x',14)}</button></div><p class="small muted" style="margin:2px 0 8px">Tu es remonté vivant : le sac est à toi. Deux choses à faire avant de redescendre.</p>`
+ return `<div class="card tipc ret"><div class="hrow"><b class="grow">Premier retour en ville</b><button class="btn sm" data-a="retx" aria-label="Fermer">${ic('x',14)}</button></div><p class="small muted" style="margin:2px 0 8px">Tu es remonté vivant : le sac est à toi. Deux choses à faire, puis redescends : ton but est le boss du Parking.</p>`
  +row(!!r.v,'Vends ta camelote',J.length?`${J.length} objet${J.length>1?'s':''} moins bon${J.length>1?'s':''} que ton équipement : environ ${fmt(jv)} kopeks.`:'Les objets moins bons que les tiens se vendent au Sac, en un bouton.','v','Au Sac')
  +row(!!r.a,'Achète une Trousse de soins','Elle te soigne en pleine descente. Babouchka Zina en vend au Comptoir.','a','Au Comptoir')+`</div>`}
+/* v0.79.1 : avant la 1re descente, l'écran Zone ne montre plus le pavé d'aide mais une ligne ; la bulle complète reste à un toucher (« Comment ça marche », puis le « ? ») */
+function firstCard(){return `<div class="card tipc"><b>Première descente</b><p>Descends au Parking Lénine : touche « Descendre », plus bas. Ton but : le boss tout en bas, puis l’abri suivant. Le reste s’apprend en route.</p><div class="hrow" style="gap:8px;margin-top:6px"><button class="btn sm main grow" data-a="gok" data-v="z_zone">Compris</button><button class="btn sm" data-a="ghelp" data-v="z_zone">Comment ça marche</button></div></div>`}
 function retHint(){return retOn()&&!(S.st.ret||{}).a?`<div class="card tipc"><b>Ta première Trousse</b><p>Elle te soigne en pleine descente. Touche « Acheter » sur la Trousse de soins.</p></div>`:''}
 /* v0.79.0 : un mot de Gleb sur chaque lieu qui s'ouvre en Ville */
 const VGL={prep:'« Prépare-toi : le Bureau ne rembourse pas les imprévoyants. »',planque:'« Ta planque. Elle sent le rat, mais c’est ton rat. »',bistrot:'« Tolik paie en contrats. Lis le petit texte, il est écrit en sang. »',factions:'« Choisis ton camp. Ils sont tous pires que moi, mais ça se discute. »',komso:'« Le Komsomol t’entraîne. Je ne dis pas que ça marche. »',boulot:'« Pendant que tu dors, ton boulot bosse. C’est déjà un meilleur employé que toi. »',comb:'« Un larcin, c’est du travail, sans les papiers. »',equipe:'« Des ramasseurs pour fouiller à ta place. Ils meurent moins bien que toi, mais plus souvent. »'};
@@ -3589,7 +3594,7 @@ const QUESTS=[
  {id:'q8',t:'Archiviste',d:'Trouve 3 notes en fouillant les abris.',why:'Vivograd a des choses à raconter, surtout les morts. Tes notes sont dans le Carnet de l’onglet Perso.',r:150}];
 function quest(id){
  if(!S.q)S.q={};if(S.q[id])return;const q=QUESTS.find(x=>x.id===id);if(!q)return;
- S.q[id]=1;S.kop+=q.r;toast(`Objectif accompli : ${q.t} (+${q.r} kopeks)`,'q');
+ S.q[id]=1;S.kop+=q.r;if(!SIM&&(S.run||retOn()))log(`Objectif accompli : ${q.t} (+${q.r} kopeks)`,'good');else toast(`Objectif accompli : ${q.t} (+${q.r} kopeks)`,'q');
 }
 function nextQuest(){return QUESTS.find(q=>!(S.q&&S.q[q.id]))}
 
@@ -3927,7 +3932,7 @@ function lootOf(it){return[itemName(it),itemColor(it),it.q||1,isStack(it)?null:i
 function vCreate(){
  const c=UI.create||(UI.create={name:'',prof:'videur',at:profAt(PROFI.videur)});const pf=PROFI[c.prof];
  const left=crLeft(c.at);   // v0.47.0 : 3 points à placer (7 au plus) ; on peut baisser plusieurs attributs sous 5 (3 au plus bas) : 4 points rendus au plus (AT_GAIN)
- return `<div class="hero">${banner()}<div class="heroin"><h2>Nouveau récupérateur</h2><p>Vivograd, 2141. La dernière ville vivante. La Coopérative paie ceux qui osent descendre sous le Marché et remonter avec ce qu’ils trouvent. Choisis ton nom et un profil : il monte ses deux attributs clés à 7 et baisse deux attributs inutiles à 4. Le Débiteur et la Récidiviste te laissent tout placer toi-même. Tu peux tout retoucher, et baisser des attributs sous 5 (3 au plus bas) pour gagner jusqu’à 4 points.</p></div></div>
+ return `<div class="hero">${banner()}<div class="heroin"><h2>Nouveau récupérateur</h2><p>Vivograd, 2141. La Coopérative paie ceux qui descendent sous le Marché et remontent avec ce qu’ils trouvent. Choisis ton nom : le Videur est conseillé pour débuter. Tu pourras tout changer plus tard.</p><details class="more"><summary>Règles des profils et des attributs</summary><p class="small">Un profil monte ses deux attributs clés à 7 et baisse deux attributs inutiles à 4. Le Débiteur et la Récidiviste te laissent tout placer toi-même. Tu peux tout retoucher, et baisser des attributs sous 5 (3 au plus bas) pour gagner jusqu’à 4 points.</p></details></div></div>
  <div class="card"><label class="small muted" for="nm">Ton nom</label><input type="text" id="nm" maxlength="20" value="${esc(c.name)}" placeholder="Sacha Volkov"></div>
  ${hint('Spécialise-toi : pousse deux ou trois attributs plutôt que tout un peu. À 7 puis à 10, chaque attribut débloque un palier (tout est expliqué dans Perso). Au début, Perception et Agilité aident le plus : tu touches plus souvent et tu frappes plus de fois par tour.')}
  <div class="card"><h3 style="margin:0 0 6px">Ton profil</h3><div class="pfg">${PROFILS.map(p=>`<button class="pft ${c.prof===p.id?'on':''}" data-a="cprof" data-v="${p.id}" aria-label="${esc(p.n)}">${p.id==='videur'?'<i class="rec">Conseillé</i>':''}${spr('pf_'+p.id,'pfi')}<b>${esc(p.n.replace(/^(Le|La|L’) ?/,''))}</b><span>${esc(p.r)}</span></button>`).join('')}</div>${pf?`<div class="pfbig">${spr('pf_'+pf.id,'pfl')}<div class="pfd"><b>${esc(pf.n)}</b><span class="pfr">${esc(pf.r)}</span>${pf.id==='videur'?'<span class="recb">Conseillé pour débuter : costaud, simple à jouer</span>':''}<p class="small">${esc(pf.x)}</p>${pf.free?'':`<div class="pcs">${profChips(pf)}</div>`}<p class="small muted">${esc(profLine(pf))}</p></div></div>`:''}</div>
@@ -4040,7 +4045,7 @@ function vZone(){
  h+=retCard();
  h+=radioPanel();
  h+=perkCall();
- h+=retOn()?'':guide('z_zone');
+ h+=retOn()?'':(!SIM&&nDesc()<1&&!(S.st.guide||{}).z_zone&&UI.help!=='z_zone'?firstCard():guide('z_zone'));
  if(!S.run){const oo=objOpen(),dd=objDot(nd);h+=`<div class="hud${oo?' open':''}">${objHead(oo,dd)}${oo?`<div class="hudb">${zoneGoal()}${giftLine()}${nd<1?'':zonePills()}<button class="pathb" data-a="path">${ic('star',14)}<span class="grow">Ton chemin</span><span style="opacity:.6">›</span></button></div>`:''}</div>`;h+=vunCards()}
  h+=`<div class="doors">${ABRIS.map(ab=>{
   if(ab.lock)return `<div class="doorc lockd" data-ab="${ab.id}">${doorImg(ab)}<div class="din"><div class="hrow"><h2>${ab.n}</h2><span class="tag">${ab.lock}</span></div><p class="muted">${esc(ab.d)}</p>${ambTxt(ab.id)}<span class="chip" style="align-self:flex-start">Niveaux ${ab.lvl}</span></div></div>`;
@@ -4109,7 +4114,7 @@ function vRun(){
   h+=`<div class="rooms n${opts.length}">${opts.map((t,i)=>{const m=RMETA[t];return `<button class="rcard ${t}" data-a="room" data-v="${i}">${(k=>k?`<span class="rb" data-r="${k}"><span class="pc">${rpic(t,26)}</span></span>`:`<span class="rico">${ic(m.i,30)}</span>`)(rdecFor(t,rvOf(run.e,run.r,i)))}<b>${t==='event'&&pal('PER')>=1?esc(evPeek(i).t):ROOMS[t].n}</b><span class="rd">${t==='event'&&pal('PER')>=1?'Repérage : tu sais ce qui t’attend.':m.d}</span><span class="rp">Risque ${pips(m.risk,'risk')}</span><span class="rp">Butin ${pips(m.loot,'loot')}</span><span class="go">Entrer</span></button>`}).join('')}</div>`;
   if(runPrep('scout')&&run.r+1<ab.rows){const nx=run.map[run.e][run.r+1];h+=`<p class="small muted" style="margin:8px 2px">${ic('eye',14)} Plan du cheminot, rangée suivante : ${nx.map(t=>ROOMS[t].n.toLowerCase()).join(', ')}.</p>`}
   if(run.pr&&run.pr.evac)h+=`<button class="btn full" style="margin:8px 0" data-a="evac">${ic('lift',18)} Remontée d’urgence (Boris)</button>`;
-  h+=vLog()+woundCard()+`<div class="card"><h3 style="margin-top:0">Utiliser un objet</h3>${quickUse(false)}</div>`;
+  h+=vLog()+woundCard()+((run.rod&&S.hp>=hpMax()&&S.rads<=0)?'':`<div class="card"><h3 style="margin-top:0">Utiliser un objet</h3>${quickUse(false)}</div>`);
  }else if(run.sc==='combat')h+=`<div class="cbt">${vCombat()}</div>`;
  else if(run.sc==='hack')h+=vHack();
  else if(run.sc==='ev'){
@@ -4231,14 +4236,14 @@ function vCombat(){
  <div class="small muted">${gone?(e.fled?'s’est enfui':'mort'):`${e.hp}/${e.hpMax} PV · tu touches ${hitChance(e,false)} %${e.cov?' · à couvert':''}`}</div>${gone?'':itChip(e)}</div>${i===cb.tgt&&!gone?`<span class="aim">${ic('target',22)}</span>`:''}</button>`}).join('')}${ibub(cb)}</div>`;
  h+=vLog(true);
  h+=`<div class="card me"><div class="hrow small"><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(itemName(w))}</span><b style="flex:none">${cb.mine?'mine posée · ':''}${cb.pa}${(cb.pa)>(PA())?' PA (+'+((cb.pa)-(PA()))+')':'/'+(PA())+' PA'}${cb.pk?` <span class="muted">(+${cb.pk})</span>`:''}</b></div><div class="pa">${Array.from({length:Math.max(PA(),cb.pa)},(_,i)=>`<i class="${i<cb.pa?'on':''} ${i>=PA()?'xtra':''}"></i>`).join('')}</div>
-<div class="acts${canTalk()?' acts7':''}">
+${rodBasic()?'<div class="small muted" style="margin:2px 0 6px">PA = points d’action : chaque action en coûte, et la barre se remplit de nouveau à chaque tour. Plus tard : Viser, Couvert et Auto.</div>':''}<div class="acts${canTalk()?' acts7':''}">
  <button class="act main ${cb.pa<ws.ap?'off':''}" data-a="atk">${SPR['i_'+w.b]?iic(w,28):ic(itemIcon(w),22)}<b>Attaquer</b><span>${ws.ap} PA</span></button>
- <button class="act ${cb.pa<ws.ap+2?'off':''}" data-a="aim">${ic('target',22)}<b>Viser</b><span>${ws.ap+2} PA, ${pal('PER')>=2?'sûr, critique':'+20 %'}</span></button>
- <button class="act ${cb.pa<(pactOn('soudure')?0:2)?'off':''}" data-a="cov">${ic('shield',22)}<b>Couvert</b><span>${pactOn('soudure')?'0 PA':'2 PA'}, esquive, coups /2</span></button>
+ ${rodBasic()?'':`<button class="act ${cb.pa<ws.ap+2?'off':''}" data-a="aim">${ic('target',22)}<b>Viser</b><span>${ws.ap+2} PA, ${pal('PER')>=2?'sûr, critique':'+20 %'}</span></button>
+ <button class="act ${cb.pa<(pactOn('soudure')?0:2)?'off':''}" data-a="cov">${ic('shield',22)}<b>Couvert</b><span>${pactOn('soudure')?'0 PA':'2 PA'}, esquive, coups /2</span></button>`}
  ${canTalk()?`<button class="act ${cb.pa<2?'off':''}" data-a="talk">${ic('user',22)}<b>Parlementer</b><span>2 PA, ${talkCh()} % · Baratin</span></button>`:''}
  <button class="act" data-a="flee">${ic('run',22)}<b>Fuir</b><span>${cb.boss||bonus().noFlee?'impossible':fleeCh()+' %'}</span></button>
  <button class="act end" data-a="end">${ic('hourglass',22)}<b>Fin du tour</b><span>ennemis</span></button>
- <button class="act" data-a="auto">${ic('bolt',22)}<b>Auto</b><span>s’arrête aux gros coups</span></button></div>
+ ${rodBasic()?'':`<button class="act" data-a="auto">${ic('bolt',22)}<b>Auto</b><span>s’arrête aux gros coups</span></button>`}</div>
  <h3>Objets (2 PA)</h3>${quickUse(true)}</div>`;
  h+=guide('c_comb');
  return h;
@@ -4765,9 +4770,14 @@ const GUIDE={
  m_comptoir:['Comptoir','Zina vend les consommables : soins, anti-rads, munitions de survie, en stock limité jusqu’au prochain arrivage. La Trousse rend 25 % de tes PV, le Stimpak 50 % : rares, chères, et ce sont elles qui gagnent un combat de boss. Un bon Charisme fait baisser les prix. Une bonne dentition, rarement.',()=>'Ne redescends jamais sans au moins deux soins dans le sac. Pour un boss, deux Trousses minimum : la ligne de chances, devant sa porte, te dit si tu es prêt.'],
  m_etal:['Étal',`Sokol vend des armes et des équipements à ton niveau, un nouveau lot toutes les 4 heures. Plus tu montes, plus les raretés suivent : du Prototype à partir du niveau ${EQ.rarLv[3]}. Parfois une perle, souvent de la ferraille hors de prix, avec le sang de l’ancien propriétaire en supplément gratuit.`,()=>'Compare avec ce que tu portes : n’achète que si c’est clairement mieux.']
 };
-function guide(k){const g=GUIDE[k];if(!g)return '';const seen=(S.st.guide||{})[k];if(seen&&UI.help!==k)return `<div class="ghelp"><button data-a="ghelp" data-v="${k}" aria-label="À quoi sert cet onglet">?</button></div>`;
+/* v0.80.0 (fin du chantier tutoriel) : une bulle d'écran = une ou deux phrases (GSHORT) + « En savoir plus » replié (texte complet) ; elle ne s'ouvre pas toute seule pendant le rodage ni sur la carte du premier retour, ni sur un onglet de la Ville ou du Marché avant la 1re descente (le « ? » reste) ; tout le texte complet se relit dans Carnet > Guide > Aide des écrans. */
+const GSHORT={c_comb:'Un ennemi qui clignote en rouge va frapper fort : mets-toi à couvert, ou vise-le.',z_zone:'Choisis un abri, descends, remonte vivant : le sac est à toi. Si tu meurs, il reste en bas.',v_prep:'Kostia vend des avantages pour ta prochaine descente. Il garantit tout, sauf ta survie.',v_boulot:'Lance un boulot, ferme le jeu, reviens encaisser. Ton absence ne te coûte rien.',v_equipe:'Des ramasseurs que tu envoies piller à ta place. Ils rapportent du matériel, et meurent parfois.',v_planque:'Ton trou à rats. Chaque amélioration donne un bonus permanent.',v_factions:'Les clans de Vivograd. Leurs contrats font monter ta réputation, qui débloque des avantages. On ne plaît pas à tout le monde.',v_bistrot:'Des contrats simples à remplir dans la Zone, et des boissons pour la prochaine descente.',v_comb:'Des combines qui coûtent du Cran et rapportent des kopeks.',v_komso:'Olga t’entraîne contre quelques kopeks, sans risquer ta peau, jusqu’à un plafond.',m_svc:'Soins, purge des rads, réparations et vente en vrac : ton butin devient des kopeks, tes kopeks de la survie.',m_etabli:'Fabrique des consommables avec tes matériaux, et démonte ce qui ne sert à rien.',m_atelier:'Gleb forge une pièce neuve à ton niveau, ou améliore ce que tu as déjà. C’est le trou noir de ton portefeuille.',m_comptoir:'Zina vend les soins, en stock limité. La Trousse rend 25 % de tes PV, le Stimpak 50 %.',m_etal:'Sokol vend des armes et équipements à ton niveau, un nouveau lot toutes les 4 heures.'};
+function guide(k){const g=GUIDE[k];if(!g)return '';const seen=(S.st.guide||{})[k];
+ const quiet=!SIM&&!seen&&(rodOn()||retOn()||(nDesc()<1&&k!=='z_zone'));
+ if((seen||quiet)&&UI.help!==k)return `<div class="ghelp"><button data-a="ghelp" data-v="${k}" aria-label="À quoi sert cet onglet">?</button></div>`;
  let now='';try{now=g[2]()}catch(e){dlog('ERREUR','objectif : '+((e&&e.message)||e))}
- return `<div class="card guide"><h3>${ic('help',18)} ${g[0]} : à quoi ça sert</h3><p>${g[1]}</p>${now?`<p class="now"><b>Quoi faire maintenant :</b> ${now}</p>`:''}<button class="btn main full" data-a="gok" data-v="${k}">Compris</button></div>`}
+ const sh=GSHORT[k];
+ return `<div class="card guide"><h3>${ic('help',18)} ${g[0]} : à quoi ça sert</h3><p>${sh||g[1]}</p>${sh?`<details class="more"><summary>En savoir plus</summary><p class="small">${g[1]}</p></details>`:''}${now?`<p class="now"><b>Quoi faire maintenant :</b> ${now}</p>`:''}<button class="btn main full" data-a="gok" data-v="${k}">Compris</button></div>`}
 const VTABS=[['prep','Préparer','eye'],['boulot','Boulots','hourglass'],['equipe','Équipe','man'],['planque','Planque','bag'],['factions','Factions','crown'],['bistrot','Bistrot','can'],['comb','Larcins','fist'],['komso','Komsomol','dumbbell']];
 /* ===================== ACTIONS LONGUES (v0.6.0) ===================== */
 const JOB_H=[1,4,8];
@@ -5522,6 +5532,24 @@ function selfTest(){const keep=JSON.stringify(S),ui={tab:UI.tab,modal:UI.modal,c
    ck('guide : la 1re remontée est rangée',!!S.st.dsc&&true,0);
    ck('Gleb parle sur les lieux de la Ville',Object.keys(VUN).every(k=>VGL[k]),Object.keys(VUN).filter(k=>!VGL[k]));
   }finally{SIM=1}});
+  t('Fin du tutoriel : bulles courtes (v0.80.0)',()=>{fresh();S.st.runs=2;S.st.guide={};S.st.ret={x:1};S.run=null;dirty();SIM=0;try{
+   ck('bulles : chaque aide d’écran a sa version courte (30 mots au plus)',Object.keys(GUIDE).every(k=>GSHORT[k]&&GSHORT[k].split(/\s+/).length<=30),Object.keys(GUIDE).filter(k=>!GSHORT[k]||GSHORT[k].split(/\s+/).length>30));
+   const h=guide('m_comptoir');ck('bulle ouverte : version courte, « En savoir plus » replié, bouton Compris',h.includes(GSHORT.m_comptoir)&&/<details class="more">/.test(h)&&h.includes('data-a="gok"'),0);
+   S.st.runs=0;ck('1re visite d’un onglet avant la 1re descente : seulement le « ? »',!/class="card guide"/.test(guide('m_comptoir'))&&/ghelp/.test(guide('m_comptoir')),0);
+   S.st.runs=1;S.run={rod:1};ck('rodage : la bulle de combat ne s’ouvre pas toute seule',!/class="card guide"/.test(guide('c_comb')),0);S.run=null;
+   S.st.runs=2;S.st.ret={x:1};UI.tab='perso';UI.ptab='carnet';UI.ctab='guide';const g=vGuide();ck('Guide : toutes les aides d’écran se relisent en texte complet',Object.keys(GUIDE).every(k=>g.includes(GUIDE[k][0])),0);
+   S.st.runs=0;S.st.guide={};ck('1er écran de la Zone : une ligne, pas le pavé',/Première descente/.test(firstCard())&&!/Les élites/.test(firstCard())&&/data-a="ghelp"/.test(firstCard()),0);
+  }finally{SIM=1}});
+  t('Tutoriel, dernières retouches (v0.80.1)',()=>{fresh();S.st.runs=0;S.st.deaths=0;S.st.ret={x:1};dirty();SIM=0;try{
+   startRun('lenine');enterRoom(0);S.run.cb.pa=PA();let h=vCombat();
+   ck('1er combat du rodage : seulement Attaquer, Fuir, Fin du tour, et les PA expliqués',/data-a="atk"/.test(h)&&/data-a="flee"/.test(h)&&/data-a="end"/.test(h)&&!/data-a="aim"/.test(h)&&!/data-a="cov"/.test(h)&&!/data-a="auto"/.test(h)&&/PA = points d’action/.test(h),0);
+   S.run.e=1;S.run.cb=null;S.run.r=0;S.run.sc='map';enterRoom(0);S.run.cb.pa=PA();h=vCombat();ck('2e combat du rodage : toutes les actions',/data-a="aim"/.test(h)&&/data-a="cov"/.test(h)&&/data-a="auto"/.test(h)&&!/PA = points d’action/.test(h),0);
+   ck('guide : « Ton but » rangé dès le rodage',!!S.st.dsc.but&&/boss/.test(DSC.find(x=>x[0]==='but')[2]),0);
+   S.run.cb=null;const run0=S.run;S.run=null;S.st.ret=null;S.st.runs=1;ck('Zone et retour : le but est dit',/boss/.test(firstCard())&&/boss du Parking/.test(retCard()),0);S.st.runs=0;S.run=run0;
+   S.run.log=[];S.q={};quest('q2');ck('objectif accompli en descente : journal, pas de bulle',S.run.log.some(l=>/Objectif accompli/.test(l[0])),0);
+   S.run=null;S.st.deaths=0;S.last={ok:false,t:'Mort dans la zone',x:'x',lost:1,lk:0};ck('1re mort : la règle est dite',/Tu as perdu ton sac/.test(finBody()),0);
+   S.st.deaths=5;ck('mort répétée : pas de leçon en plus',!/Tu as perdu ton sac : c/.test(finBody()),0);S.last=null;
+  }finally{SIM=1}});
   t('Colis, Fourgueur, rat, défis (v0.20.0)',()=>{fresh();S.st.bk={lenine:1};S.en=900;S.lvl=10;S.st.runs=3;dirty();
    addTo(S.inv,mkStack('colis',1));colisOpen('colis');const c1=UI.colis&&findItem(UI.colis.u);ck('colis : s’ouvre à la surface, au moins Modifié, à ton niveau + 1 (v0.77.0)',!!c1&&c1.it.r>=2&&c1.it.l===11&&UI.modal==='colis',c1&&[c1.it.r,c1.it.l]);
    ck('colis : l’écran d’ouverture s’affiche',/colbox/.test(colisModal()),0);UI.modal=null;UI.colis=null;
@@ -5616,7 +5644,7 @@ function finBody(){let h='';
   if(L.ok){h+=`<div class="chips"><span class="chip">${ic('coin',14)} +${fmt(L.kop)} kopeks</span><span class="chip">${ic('swords',14)} ${L.kills} ennemi${L.kills>1?'s':''}</span><span class="chip">${ic('bag',14)} ${L.items.length} objet${L.items.length>1?'s':''}</span></div>`;
    {const nc=colisN();if(nc)h+=`<div class="colcall">${ic('chest',30)}<div class="grow"><b>${nc} Colis à ouvrir</b><div class="small muted">Tu les as ramenés vivant. À toi de voir ce qu’il y a dedans.</div></div><button class="btn main" data-a="colis">Ouvrir</button></div>`}
    if(L.items.length)h+=`<p class="small muted" style="margin-top:10px">Tout est rangé dans ta planque (onglet Sac). Un pourcentage vert bat ce que tu portes. Vends ou démonte le reste au Marché.</p>${lootCards(L.items)}`}
-  else h+=`<div class="chips"><span class="chip bad">${ic('bag',14)} ${L.lost} objet${L.lost>1?'s':''} perdu${L.lost>1?'s':''}</span><span class="chip bad">${ic('coin',14)} -${fmt(L.lk)} kopeks</span></div><p class="small muted" style="margin-top:10px">Soigne-toi au Marché avant de redescendre.</p>`;
+  else h+=`<div class="chips"><span class="chip bad">${ic('bag',14)} ${L.lost} objet${L.lost>1?'s':''} perdu${L.lost>1?'s':''}</span><span class="chip bad">${ic('coin',14)} -${fmt(L.lk)} kopeks</span></div><p class="small muted" style="margin-top:10px">${(S.st.deaths||0)<=2?'Tu as perdu ton sac : c’est la règle de la descente. La prochaine fois, remonte au monte-charge dès que tes PV passent sous la moitié. ':''}Soigne-toi au Marché avant de redescendre.</p>`;
   h+='</div>';
  }
  return h}
