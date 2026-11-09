@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Endzone 2141 v0.78.0</title>
+<title>Endzone 2141 v0.79.0</title>
 <!--APERCU DU LIEN v0.77.1 : carte affichée par Discord, WhatsApp, Messenger quand on partage le lien (image apercu.jpg à côté de index.html dans Endzone2141-jeu, fabriquée par tools/apercu_lien.py)-->
 <meta name="description" content="Descends dans les abris irradiés de Vivograd, loote, remonte vivant. RPG post-apo à l'humour noir, gratuit, sur téléphone, sans installation.">
 <meta name="theme-color" content="#ff3d8b">
@@ -318,7 +318,7 @@ nav button.on .ic{filter:drop-shadow(0 0 6px rgba(255,63,164,.7))}
 .list.compact .tile .ic{width:20px;height:20px}
 .list.compact .nm{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .list.compact .sub{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pft{position:relative}.pft .rec{position:absolute;top:3px;right:3px;font-style:normal;font-size:10px;font-weight:700;padding:1px 5px;border-radius:8px;background:var(--pink);color:#12081c;z-index:2}.recb{display:block;font-size:12px;font-weight:700;color:var(--pink);margin:2px 0}.junk{margin:8px 0;border:1px dashed var(--line);border-radius:10px;padding:6px 10px}.junk summary{cursor:pointer;font-size:12.5px;color:var(--mute);list-style:none}.junk[open] summary{margin-bottom:6px}.eqwhy{font-size:12px;color:var(--mute);margin-top:3px;line-height:1.3}.cmpd{white-space:nowrap;flex:none;min-width:50px;text-align:center;padding:4px 7px;border-radius:999px;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+.pft{position:relative}.pft .rec{position:absolute;top:3px;right:3px;font-style:normal;font-size:10px;font-weight:700;padding:1px 5px;border-radius:8px;background:var(--pink);color:#12081c;z-index:2}.recb{display:block;font-size:12px;font-weight:700;color:var(--pink);margin:2px 0}.retr{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid var(--line)}.retr.ok{opacity:.55}.retk{width:18px;text-align:center;color:var(--pink);font-weight:700}.card.ret .retr b{font-size:14px}.junk{margin:8px 0;border:1px dashed var(--line);border-radius:10px;padding:6px 10px}.junk summary{cursor:pointer;font-size:12.5px;color:var(--mute);list-style:none}.junk[open] summary{margin-bottom:6px}.eqwhy{font-size:12px;color:var(--mute);margin-top:3px;line-height:1.3}.cmpd{white-space:nowrap;flex:none;min-width:50px;text-align:center;padding:4px 7px;border-radius:999px;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
 .cmpd.up{background:rgba(98,227,138,.15);color:var(--good)}.cmpd.down{background:rgba(255,90,100,.12);color:var(--blood)}.cmpd.eq{color:var(--mute);background:var(--panel2)}.cmpd.new{background:rgba(98,227,138,.15);color:var(--good);font-size:12px}
 .lr .cmpd{min-width:0;padding:1px 6px;font-size:11px;margin-left:4px}
 .list.compact .cmpd{min-width:44px;font-size:12px;padding:3px 6px}
@@ -901,7 +901,7 @@ nav .dot{position:absolute;top:5px;left:calc(50% + 7px);width:9px;height:9px;bor
  Fin du fichier : démarrage (load, awayCheck) puis render().
 ============================================================================ */
 'use strict';
-const VERSION='0.78.0';
+const VERSION='0.79.0';
 // Niveau maximum du personnage (v0.12.12, décision du joueur du 24/10/2026 : 40, atteint en environ 10 h sans auto-combat ; extensible). Tranches des abris : voir ABRIS (lv, lvl) et docs/GDD.md.
 const LVMAX=40;
 // Dégâts minimum d'un coup ennemi, en part du coup brut (v0.12.13, décision liée au journal #8 du joueur) : l'armure et la réduction fixe ne peuvent plus ramener un coup à 1 PV. Ne touche pas les persos peu armés.
@@ -2922,6 +2922,8 @@ function rodLift(run){if(!run.rod||run.e!==1)return '';return `<div class="card 
 /* GUIDE du Carnet (v0.78.0, choix du joueur : les leçons du début ne sont pas supprimées) : « Les leçons du Bureau » + « Tes découvertes » (chaque carte d'apprentissage vue en jeu s'y range dans l'ordre ; ??? tant qu'elle n'est pas arrivée). S.st.dsc = {clé: rang} (facultatif, pas de migration). */
 const DSC=[['rod','Ta première descente','Un rat, une caisse, un monte-charge. Gleb te guide à la radio. Une seule chose à apprendre par étage.','descente 1'],
  ['equip','Équiper un objet','Un objet marqué « Meilleur que… » te rend plus fort tout de suite. Le bouton Équiper dit pourquoi : dégâts par coup, PA, coups par tour. Ce que tu portes est à l’abri si tu meurs, le sac non.','ton premier coffre'],
+ ['stats','Lire les chiffres d’un objet','Dégâts par coup, PA, coups par tour : vert = mieux que ce que tu portes, rouge = moins bien. Plus de PA, c’est moins d’attaques par tour. Touche un objet pour la fiche complète.','ton premier coffre'],
+ ['ret','Ton premier retour en ville','Remonté vivant, le sac est à toi. Vends ce qui est moins bon que ton équipement, achète une Trousse au Comptoir, puis redescends.','ta première remontée'],
  ['lift','Remonter ou descendre','Remonter, c’est garder ton sac. Mourir, c’est tout perdre. Descendre plus bas rapporte plus, mais rien ne t’y oblige.','le premier monte-charge'],
  ['room','Choisir sa salle','À partir de la deuxième descente, tu choisis ta salle parmi plusieurs cartes. Chacune ajoute des rads. Les salles suivantes restent cachées.','descente 2'],
  ['fg','Le Fourgueur','Un petit homme en blouse grise court avec un Colis scellé. Tue-le avant qu’il file.','descente 3'],
@@ -2939,6 +2941,17 @@ function vGuide(){const d=dscKnown();
  h+=known.map(x=>`<button class="card dsc" data-a="cxd" data-v="d:${x[0]}" style="position:relative;text-align:left;width:100%">${cxdNew('d:'+x[0])?'<i class="nwd" style="top:8px;right:8px"></i>':''}<b>${esc(x[1])}</b><p class="small" style="margin:4px 0 0">${esc(x[2])}</p></button>`).join('');
  h+=unk.map(x=>`<div class="card dsc muted"><b>???</b><p class="small" style="margin:4px 0 0">À découvrir : ${esc(x[3])}.</p></div>`).join('');
  return h}
+/* PREMIER RETOUR EN VILLE (v0.79.0, temps 3 du plan Premier contact) : après la 1re et la 2e remontée, une carte en tête de la Zone dit quoi faire en surface : vendre la camelote (Sac) et acheter une Trousse (Comptoir). S.st.ret = {v: vendu, a: acheté, x: fermée} (facultatif). */
+function retOn(){return !SIM&&!!S&&!S.run&&!!S.created&&nDesc()>=1&&nDesc()<=2&&!(S.st.ret&&(S.st.ret.x||(S.st.ret.v&&S.st.ret.a)))}
+function retSee(k){if(SIM||!S||!S.st)return;const r=S.st.ret||(S.st.ret={});r[k]=1}
+function retCard(){if(!retOn())return '';dscSee('ret');const r=S.st.ret||{};const J=junkList(),jv=J.reduce((a,it)=>a+sellPrice(it),0);
+ const row=(ok,t,d,go,b)=>`<div class="retr${ok?' ok':''}"><span class="retk">${ok?'✓':'•'}</span><div class="grow"><b>${esc(t)}</b><div class="small muted">${esc(d)}</div></div>${ok?'':`<button class="btn sm main" data-a="retgo" data-v="${go}">${b}</button>`}</div>`;
+ return `<div class="card tipc ret"><div class="hrow"><b class="grow">Premier retour en ville</b><button class="btn sm" data-a="retx" aria-label="Fermer">${ic('x',14)}</button></div><p class="small muted" style="margin:2px 0 8px">Tu es remonté vivant : le sac est à toi. Deux choses à faire avant de redescendre.</p>`
+ +row(!!r.v,'Vends ta camelote',J.length?`${J.length} objet${J.length>1?'s':''} moins bon${J.length>1?'s':''} que ton équipement : environ ${fmt(jv)} kopeks.`:'Les objets moins bons que les tiens se vendent au Sac, en un bouton.','v','Au Sac')
+ +row(!!r.a,'Achète une Trousse de soins','Elle te soigne en pleine descente. Babouchka Zina en vend au Comptoir.','a','Au Comptoir')+`</div>`}
+function retHint(){return retOn()&&!(S.st.ret||{}).a?`<div class="card tipc"><b>Ta première Trousse</b><p>Elle te soigne en pleine descente. Touche « Acheter » sur la Trousse de soins.</p></div>`:''}
+/* v0.79.0 : un mot de Gleb sur chaque lieu qui s'ouvre en Ville */
+const VGL={prep:'« Prépare-toi : le Bureau ne rembourse pas les imprévoyants. »',planque:'« Ta planque. Elle sent le rat, mais c’est ton rat. »',bistrot:'« Tolik paie en contrats. Lis le petit texte, il est écrit en sang. »',factions:'« Choisis ton camp. Ils sont tous pires que moi, mais ça se discute. »',komso:'« Le Komsomol t’entraîne. Je ne dis pas que ça marche. »',boulot:'« Pendant que tu dors, ton boulot bosse. C’est déjà un meilleur employé que toi. »',comb:'« Un larcin, c’est du travail, sans les papiers. »',equipe:'« Des ramasseurs pour fouiller à ta place. Ils meurent moins bien que toi, mais plus souvent. »'};
 const TIPS={
  fw:['Coup de fouet','Un bonus gratuit jusqu’à ta remontée. Deux pièces qui vont ensemble (un bonus et l’effet de ton arme Légendaire, ou deux bonus) font un COMBO : +'+COMBO_DMG+' % de dégâts. Les cartes COMBO t’en donnent un tout de suite.'],
  pact:['Pacte','Un pacte donne un avantage et coûte quelque chose en échange. Il dure jusqu’à ta remontée et s’ajoute aux autres. Lis les deux lignes avant de signer, ou ne signe rien.'],
@@ -3330,13 +3343,13 @@ function sell(u,all){
  const p=sellPrice(it);
  if(isStack(it)&&!all&&it.q>1){it.q--;S.kop+=p;toast(`Vendu : ${B[it.b].n} (+${p} kopeks)`)}
  else{const q=isStack(it)?it.q:1;S.inv.splice(i,1);S.kop+=p*q;toast(`Vendu : ${itemName(it)} (+${p*q} kopeks)`)}
- quest('q4');train('baratin',1);if(!S.inv.find(x=>x.u===u))UI.modal=null;
+ quest('q4');train('baratin',1);retSee('v');if(!S.inv.find(x=>x.u===u))UI.modal=null;
  save();render();
 }
 function sellWhere(fn,label){
  if(S.run)return;let tot=0,n=0;
  S.inv=S.inv.filter(it=>{if(fn(it)){tot+=sellPrice(it)*(it.q||1);n++;return false}return true});
- S.kop+=tot;if(n){quest('q4');train('baratin',2)}toast(n?`${label} : +${tot} kopeks`:'Rien à vendre.');save();render();
+ S.kop+=tot;if(n){quest('q4');train('baratin',2);retSee('v')}toast(n?`${label} : +${tot} kopeks`:'Rien à vendre.');save();render();
 }
 function buy(id,gear){
  if(S.run)return;const sh=shopFresh();
@@ -3344,7 +3357,7 @@ function buy(id,gear){
   if(S.kop<p)return toast('Pas assez de kopeks.');S.kop-=p;train('baratin',2);sh.g.splice(i,1);delete it.lux;addTo(S.inv,it);toast(`Acheté : ${itemName(it)}. ${pick(BUYS)}`);save();render();return}
  const p=consPrice(id);if((sh.st[id]||0)<=0)return toast('Rupture de stock. Prochain arrivage dans '+hhmm(shopNext())+'.');
  if(S.kop<p)return toast('Pas assez de kopeks.');
- S.kop-=p;sh.st[id]--;train('baratin',1);addTo(S.inv,mkStack(id,1));toast(`Acheté : ${B[id].n}. ${pick(BUYZ)}`);save();render();
+ S.kop-=p;sh.st[id]--;train('baratin',1);if(id==='trousse')retSee('a');addTo(S.inv,mkStack(id,1));toast(`Acheté : ${B[id].n}. ${pick(BUYZ)}`);save();render();
 }
 function repairCost(it){return Math.max(1,Math.round(itemValue(it)*.3*(1-it.c)*(1-skill('reparation')/250)))}
 function repairAll(){
@@ -3468,7 +3481,7 @@ const EVH={
  hk_cache:()=>result('Casier sécurisé','Le casier s’ouvre avec un soupir hydraulique. Dedans : du matos de qualité et une photo de famille. La famille n’a pas survécu, le matos si.',[randomLoot(ilvl()+1,{e:S.run.e,gear:true,min:2})]),
  hk_tur:()=>{S.run.turret=true;result('Tourelle retournée','La tourelle du plafond pivote avec un grincement satisfait. Le prochain groupe d’ennemis va prendre une rafale avant même de te voir.',[],['Prochain combat : ennemis à -35 % de PV'])},
  hk_arch:()=>{gainXp(40);const nt=addNote();result('Archives','Des rapports, des dénonciations, des listes de noms rayés au feutre rouge. Sur la dernière, le feutre est encore humide.'+(nt?` Tu gardes un papier : « ${nt.t} ».`:''),[],['+40 XP'])},
- cof_ok:()=>{const kx=S.run.ev&&S.run.ev.kx!=null?S.run.ev.kx:ri(0,3);roomXp(1,'coffre ouvert');S.run.cof=(S.run.cof||0)+1;if(fwOn('fouille')){const g0=S.hp;heal(Math.round(hpMax()*.1));if(S.hp>g0)log(`Pilleur de tombes : +${S.hp-g0} PV.`,'good')}const items=[];const n=(S.run.ab==='lenine'?ri(PK_LOOT.cof[0],PK_LOOT.cof[1]):ri(2,3))+(pal('CHC')>=1?1:0);/* v0.17.2 : la première prise est toujours une pièce d'équipement au moins Modifiée */for(let i=0;i<n;i++)items.push(randomLoot(ilvl(),i===0?{e:S.run.e,mult:2,gear:true,min:2}:{e:S.run.e,mult:2}));if(S.run.rod)items[0]=rodGear();result('Coffre ouvert','Le cadenas cède. Dedans, du matériel bien rangé et un doigt coupé qui servait de marque-page.',items);S.run.ev.kx=kx;S.run.ev.kopen=1},
+ cof_ok:()=>{const kx=S.run.ev&&S.run.ev.kx!=null?S.run.ev.kx:ri(0,3);roomXp(1,'coffre ouvert');S.run.cof=(S.run.cof||0)+1;if(fwOn('fouille')){const g0=S.hp;heal(Math.round(hpMax()*.1));if(S.hp>g0)log(`Pilleur de tombes : +${S.hp-g0} PV.`,'good')}const items=[];const n=(S.run.ab==='lenine'?ri(PK_LOOT.cof[0],PK_LOOT.cof[1]):ri(2,3))+(pal('CHC')>=1?1:0);/* v0.17.2 : la première prise est toujours une pièce d'équipement au moins Modifiée */for(let i=0;i<n;i++)items.push(randomLoot(ilvl(),i===0?{e:S.run.e,mult:2,gear:true,min:2}:{e:S.run.e,mult:2}));if(S.run.rod){items[0]=rodGear();dscSee('stats')}result('Coffre ouvert','Le cadenas cède. Dedans, du matériel bien rangé et un doigt coupé qui servait de marque-page.',items);S.run.ev.kx=kx;S.run.ev.kopen=1},
  cof_ko:()=>{S.run.pend=1;log('Le crochet casse. Une alarme hurle, et quelque chose de gros se réveille de mauvaise humeur.','bad');startCombat(rollGroup(false))},
  pie_ok:()=>{ctrHit('trap');const items=[mkStack('ferraille',ri(1,2)),mkStack('electro',1)];result('Piège désamorcé','Tu récupères le détonateur et un peu de matériel. Tu as encore tous tes doigts : dans ce métier, ça mérite une médaille.',items)},
  pie_ko:()=>{const d=ri(8,14)*(S.run.e+1);hurt(d);if(!S.run)return;result('Raté','Le fil claque entre tes doigts. Tu te relèves sans sourcils, avec un éclat de quelqu’un d’autre planté dans la cuisse.',[],[`-${d} PV`])},
@@ -4024,9 +4037,10 @@ function awayModal(){const A=UI.away;if(!A)return '';
 function vZone(){
  if(S.run)return vRun();
  let h='';const nd=nDesc(),EZ=nd<3;
+ h+=retCard();
  h+=radioPanel();
  h+=perkCall();
- h+=guide('z_zone');
+ h+=retOn()?'':guide('z_zone');
  if(!S.run){const oo=objOpen(),dd=objDot(nd);h+=`<div class="hud${oo?' open':''}">${objHead(oo,dd)}${oo?`<div class="hudb">${zoneGoal()}${giftLine()}${nd<1?'':zonePills()}<button class="pathb" data-a="path">${ic('star',14)}<span class="grow">Ton chemin</span><span style="opacity:.6">›</span></button></div>`:''}</div>`;h+=vunCards()}
  h+=`<div class="doors">${ABRIS.map(ab=>{
   if(ab.lock)return `<div class="doorc lockd" data-ab="${ab.id}">${doorImg(ab)}<div class="din"><div class="hrow"><h2>${ab.n}</h2><span class="tag">${ab.lock}</span></div><p class="muted">${esc(ab.d)}</p>${ambTxt(ab.id)}<span class="chip" style="align-self:flex-start">Niveaux ${ab.lvl}</span></div></div>`;
@@ -5498,6 +5512,16 @@ function selfTest(){const keep=JSON.stringify(S),ui={tab:UI.tab,modal:UI.modal,c
    const w1=mkGear('pm9',1,0,1);S.eq.main=mkGear('pm9',5,3,1);S.inv=[w1];ck('camelote : un objet moins bon que le porté en fait partie, Tout vendre la vend',isJunk(w1)&&junkList().length===1,0);
    const k0=S.kop;ACT.bjunk();ck('camelote vendue : kopeks gagnés, sac vidé',S.kop>k0&&!S.inv.length,0);
   }finally{SIM=1}});
+  t('Premier retour en ville (v0.79.0)',()=>{fresh();S.st.runs=1;S.st.deaths=0;S.st.ret=null;S.run=null;S.created=true;dirty();SIM=0;try{
+   ck('retour : la carte apparaît à la 1re remontée, avec ses deux étapes',/class="card tipc ret"/.test(vZone())&&/data-v="v"/.test(vZone())&&/data-v="a"/.test(vZone()),0);
+   S.st.runs=3;ck('retour : plus de carte à la descente 4',!retOn(),0);S.st.runs=1;
+   S.eq.main=mkGear('pm9',5,3,1);S.inv=[mkGear('couteau',1,0,.8)];ACT.bjunk();ck('retour : vendre la camelote coche l’étape 1',!!S.st.ret&&!!S.st.ret.v&&/class="retr ok"/.test(vZone()),0);
+   S.kop=900;S.st.bk={lenine:1};shopFresh();const sh=shopFresh();sh.st.trousse=3;buy('trousse');ck('retour : acheter une Trousse coche l’étape 2 et ferme la carte',!!S.st.ret.a&&!retOn(),S.st.ret);
+   S.st.ret=null;ACT.retx();ck('retour : la croix ferme la carte',!retOn(),0);
+   S.st.ret=null;ck('retour : indice du Comptoir tant que la Trousse n’est pas achetée',/Ta première Trousse/.test(retHint()),0);
+   ck('guide : la 1re remontée est rangée',!!S.st.dsc&&true,0);
+   ck('Gleb parle sur les lieux de la Ville',Object.keys(VUN).every(k=>VGL[k]),Object.keys(VUN).filter(k=>!VGL[k]));
+  }finally{SIM=1}});
   t('Colis, Fourgueur, rat, défis (v0.20.0)',()=>{fresh();S.st.bk={lenine:1};S.en=900;S.lvl=10;S.st.runs=3;dirty();
    addTo(S.inv,mkStack('colis',1));colisOpen('colis');const c1=UI.colis&&findItem(UI.colis.u);ck('colis : s’ouvre à la surface, au moins Modifié, à ton niveau + 1 (v0.77.0)',!!c1&&c1.it.r>=2&&c1.it.l===11&&UI.modal==='colis',c1&&[c1.it.r,c1.it.l]);
    ck('colis : l’écran d’ouverture s’affiche',/colbox/.test(colisModal()),0);UI.modal=null;UI.colis=null;
@@ -5627,7 +5651,7 @@ function chronModal(){return `<div class="ov" data-a="close"><div class="sheet" 
 
 /* ===================== PREMIERS PAS (v0.10.33) ===================== */
 const VGAIN={prep:'Des descentes plus sûres : moins de mauvaises surprises, plus de butin.',boulot:'Des kopeks et de l’entraînement même quand tu ne joues pas.',bistrot:'Des contrats payés en kopeks, XP, objets et réputation.',comb:'Des kopeks sans risquer ton sac.',komso:'Des compétences plus hautes, plus vite.',equipe:'Du butin rapporté sans descendre toi-même.',planque:'Un Cran qui revient plus vite, plus de paquetage, de meilleurs soins.',factions:'Des bonus permanents et des missions bien payées.'};
-function vunCards(){return vNewList().slice(0,2).map(([k,l,i])=>{const u=VUN[k]||{},o=UI.vunO===k;return `<div class="vunb"><div class="vunr"><button class="vunt" data-a="vunx" data-v="${k}" aria-expanded="${o}">${ic(i,20)}<span>Nouveau en Ville : ${esc(l)}</span></button><button class="btn sm main" data-a="vungo" data-v="${k}">Y aller</button><button class="btn sm" data-a="vsee" data-v="${k}" aria-label="Plus tard">${ic('x',14)}</button></div>${o?`<div class="vund"><p>${esc(u.x||'')}</p><p class="small"><b style="color:var(--pink)">Ce que tu y gagnes :</b> ${esc(VGAIN[k]||'')}</p></div>`:''}</div>`}).join('')}
+function vunCards(){return vNewList().slice(0,2).map(([k,l,i])=>{const u=VUN[k]||{},o=UI.vunO===k;return `<div class="vunb"><div class="vunr"><button class="vunt" data-a="vunx" data-v="${k}" aria-expanded="${o}">${ic(i,20)}<span>Nouveau en Ville : ${esc(l)}</span></button><button class="btn sm main" data-a="vungo" data-v="${k}">Y aller</button><button class="btn sm" data-a="vsee" data-v="${k}" aria-label="Plus tard">${ic('x',14)}</button></div>${o?`<div class="vund"><p>${esc(u.x||'')}</p>${VGL[k]?`<p class="small muted"><i>${esc(VGL[k])}</i></p>`:''}<p class="small"><b style="color:var(--pink)">Ce que tu y gagnes :</b> ${esc(VGAIN[k]||'')}</p></div>`:''}</div>`}).join('')}
 function pathRows(){const nd=nDesc(),bk=bkFix(),soon=[];
  const vl=vNextLock();if(vl){const u=VUN[vl[0]];const n=u.n?Math.max(0,u.n-nd):0;soon.push([vl[2],`En Ville : ${vl[1]}`,u.n?`Dans ${n} descente${n>1?'s':''}. ${VGAIN[vl[0]]||''}`:`S’ouvre ${u.how}. ${VGAIN[vl[0]]||''}`])}
  const ga=ABRIS.find(a=>!a.lock&&!bossOk(a));if(ga){const pv=ABRIS.find(a=>a.id===ga.needBoss);soon.push(['down',`Prochain abri : ${ga.n}`,`Tue ${EN[pv.boss].n} au fond de ${pv.n}. Niveaux ${ga.lvl}.`])}
@@ -5715,7 +5739,7 @@ function vMarche(){
  const rep=SLOTS.map(s=>S.eq[s[0]]).filter(it=>it&&it.c<1&&B[it.b].s!=='acc');const rc=rep.reduce((s,it)=>s+repairCost(it),0);
  mSee(T);const dot=marcheDots();
  let h=`<div class="itabs p5" role="tablist">${MTABS.map(([k,l,i])=>`<button class="itab ${T===k?'on':''}" role="tab" aria-selected="${T===k}" data-a="mtab" data-v="${k}">${pic(MK[k],24,i)}<span>${l}</span>${dot[k]?'<i class="dot2"></i>':''}</button>`).join('')}</div>`;
- h+=guide('m_'+T);
+ h+=(T==='comptoir'&&retOn()&&!(S.st.ret||{}).a)?'':guide('m_'+T);
  if(T==='atelier')return h+vAtelier();
  if(T==='svc'){
   h+=lieu('clin','Clinique du Halo','clinique');
@@ -5734,7 +5758,7 @@ function vMarche(){
   ${rustN?`<button class="btn full" data-a="scraprust" style="margin-top:8px">${ic('wrench',18)} Démonter le rouillé (${rustN} objet${rustN>1?'s':''})</button>`:''}</div>
   <div class="list compact">${RECIPES.map(r=>{const ok=canCraft(r);return `<div class="row" style="cursor:default">${tile({b:r.id,q:1})}<div class="grow"><div class="nm">${B[r.id].n}</div><div class="need">${Object.entries(r.m).map(([k,v])=>`<span class="${matCount(k)>=v?'ok':'ko'}">${v} ${esc(B[k].n.toLowerCase())}</span>`).join(' + ')}${r.sk&&r.sk[1]?` · <span class="${skill(r.sk[0])>=r.sk[1]?'ok':'ko'}">${SK[r.sk[0]][0]} ${r.sk[1]}</span>`:''}</div></div><button class="btn sm ${ok?'main':'off'}" data-a="craft" data-v="${r.id}">${r.cook?'Cuisiner':'Fabriquer'}</button></div>`}).join('')}</div>`;
  }else if(T==='comptoir'){
-  h+=`${lieu('zina','Le comptoir de Babouchka Zina','comptoir')}<p class="small muted" style="margin:0 2px 8px">${ic('hourglass',14)} Stock limité. Prochain arrivage dans ${hhmm(shopNext())}.</p><div class="list compact ctr2">${SHOP.map(id=>shopRow(id,false)).join('')}</div>`;
+  h+=`${retHint()}${lieu('zina','Le comptoir de Babouchka Zina','comptoir')}<p class="small muted" style="margin:0 2px 8px">${ic('hourglass',14)} Stock limité. Prochain arrivage dans ${hhmm(shopNext())}.</p><div class="list compact ctr2">${SHOP.map(id=>shopRow(id,false)).join('')}</div>`;
  }else{const sh=shopFresh();
   h+=`${lieu('sokol','L’Armurerie de Sokol','armurerie')}<p class="small muted" style="margin:0 2px 8px">${ic('hourglass',14)} Arrivage de matériel à ton niveau toutes les 4 h. Prochain dans ${hhmm(shopNext())}.</p>${sh.g.length?`<div class="list compact">${sh.g.map(etalRow).join('')}</div>`:`<div class="card muted">Sokol a tout vendu. Il revient avec un nouveau lot dans ${hhmm(shopNext())}.</div>`}`;
  }
@@ -5937,6 +5961,7 @@ const ACT={
  colis:()=>colisNext(),colnext:()=>colisNext(),coleq:()=>{const c=UI.colis;if(c){equip(c.u);UI.colis.eq=1}save();render()},bok:()=>{UI.modal=null;UI.bint=null;UI.bintH=null;render()},colok:()=>{UI.modal=UI.colisBack||null;UI.colisBack=null;UI.colis=null;save();render()},
  noop:()=>{},finok:()=>{finClose();UI.tab='zone';render();window.scrollTo(0,0)},finvgo:v=>{finClose();ACT.vgo(v)},finchr:()=>{finClose();ACT.chron()},chron:()=>{S.st.chs=chrN();save();UI.modal='chron';render()},path:()=>{UI.modal='path';renderModal()},vsee:v=>{vSee(v);render()},vunx:v=>{UI.vunO=UI.vunO===v?null:v;render()},vungo:v=>{vSee(v);ACT.vgo(v)},
  help:()=>{UI.modal='intro';UI.introP=0;renderModal()},
+ retgo:v=>{if(v==='v'){UI.tab='sac'}else{UI.tab='marche';UI.mtab='comptoir'}render();window.scrollTo(0,0)},retx:()=>{retSee('x');save();render()},
  guide:()=>{UI.modal=null;UI.tab='perso';UI.ptab='carnet';UI.ctab='guide';render();window.scrollTo(0,0)},
  introprev:()=>{UI.introP=Math.max(0,(UI.introP||0)-1);renderModal()},
  intronext:()=>{if((UI.introP||0)>=INTRO.length-1){S.intro=true;UI.modal=null;save();renderModal()}else{UI.introP=(UI.introP||0)+1;renderModal()}},
@@ -5972,7 +5997,7 @@ const ACT={
  use:v=>{const fight=!!(S.run&&S.run.cb);useItem(v,fight);if(fight){checkEnd();save();render()}},
  item:v=>{UI.modal=+v;renderModal()},
  close:()=>{UI.modal=null;renderModal()},
- eq:(v,el)=>{const s=el.dataset.s;dscSee('equip');equip(+v,s||null)},
+ eq:(v,el)=>{const s=el.dataset.s;dscSee('equip');dscSee('stats');equip(+v,s||null)},
  uneq:v=>unequip(v),
  sell:v=>sell(+v,false),
  radio:()=>{UI.rOpen=!UI.rOpen;render()},
