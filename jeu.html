@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Endzone 2141 v0.117.0</title>
+<title>Endzone 2141 v0.119.0</title>
 <!--APERCU DU LIEN v0.77.1 : carte affichée par Discord, WhatsApp, Messenger quand on partage le lien (image apercu.jpg à côté de index.html dans Endzone2141-jeu, fabriquée par tools/apercu_lien.py)-->
 <meta name="description" content="Descends dans les abris irradiés de Vivograd, loote, remonte vivant. RPG post-apo à l'humour noir, gratuit, sur téléphone, sans installation.">
 <meta property="og:type" content="website">
@@ -316,6 +316,7 @@ nav button.on .ic{filter:drop-shadow(0 0 6px rgba(255,63,164,.7))}
 .list.compact .row{padding:6px 10px;gap:10px;min-height:48px}
 .list.compact .tile{width:36px;height:36px;border-radius:8px}
 .list.compact .tile .ic{width:20px;height:20px}
+.tile.tis{width:54px;height:54px;border-radius:12px}.tile.tis .ispr{width:46px;height:46px}.list.compact .tile.tis{width:44px;height:44px;border-radius:10px}.list.compact .tile.tis .ispr{width:38px;height:38px}   /* v0.118.0 */
 .list.compact .nm{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .list.compact .sub{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pft{position:relative}.pft .rec{position:absolute;top:3px;right:3px;font-style:normal;font-size:10px;font-weight:700;padding:1px 5px;border-radius:8px;background:var(--pink);color:#12081c;z-index:2}.recb{display:block;font-size:12px;font-weight:700;color:var(--pink);margin:2px 0}.langsw{display:flex;gap:6px;justify-content:center;margin:0 0 8px}.langsw button{flex:1;max-width:140px;padding:7px 10px;border-radius:999px;border:1px solid var(--line);background:var(--panel2);color:var(--txt,#eee);font-weight:600;font-size:13px}.langsw button.on{border-color:var(--pink);color:var(--pink);background:rgba(255,61,139,.12)}.more{margin:6px 0 0}.more summary{cursor:pointer;font-size:13px;color:var(--pink)}.retr{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid var(--line)}.retr.ok{opacity:.55}.retk{width:18px;text-align:center;color:var(--pink);font-weight:700}.card.ret .retr b{font-size:14px}.junk{margin:8px 0;border:1px dashed var(--line);border-radius:10px;padding:6px 10px}.junk summary{cursor:pointer;font-size:12.5px;color:var(--mute);list-style:none}.junk[open] summary{margin-bottom:6px}.eqwhy{font-size:12px;color:var(--mute);margin-top:3px;line-height:1.3}.cmpd{white-space:nowrap;flex:none;min-width:50px;text-align:center;padding:4px 7px;border-radius:999px;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
@@ -954,7 +955,7 @@ nav .dot{position:absolute;top:5px;left:calc(50% + 7px);width:9px;height:9px;bor
  Fin du fichier : démarrage (load, awayCheck) puis render().
 ============================================================================ */
 'use strict';
-const VERSION='0.117.0';
+const VERSION='0.119.0';
 // Niveau maximum du personnage (v0.12.12, décision du joueur du 24/10/2026 : 40, atteint en environ 10 h sans auto-combat ; extensible). Tranches des abris : voir ABRIS (lv, lvl) et docs/GDD.md.
 const LVMAX=40;
 // Dégâts minimum d'un coup ennemi, en part du coup brut (v0.12.13, décision liée au journal #8 du joueur) : l'armure et la réduction fixe ne peuvent plus ramener un coup à 1 PV. Ne touche pas les persos peu armés.
@@ -4241,7 +4242,7 @@ const RMETA={
  elite:{i:'skull',risk:3,loot:3,d:'Un ennemi renforcé, meilleur butin'},
  boss:{i:'crown',risk:3,loot:3,d:'Le chef de l’abri, et son coffre'}};
 function pips(n,cls){return `<span class="pips ${cls}">${[0,1,2].map(i=>`<i class="${i<n?'on':''}"></i>`).join('')}</span>`}
-function tile(it,size){const r=isStack(it)?'s':it.r;return `<span class="tile r${r}" style="${size?`width:${size}px;height:${size}px`:''}">${SPR['i_'+it.b]?iic(it,size?Math.round(size*.82):36):ic(itemIcon(it),size?Math.round(size*.55):24)}${it.st?'<i class="stb">SET</i>':''}</span>`}
+function tile(it,size){const r=isStack(it)?'s':it.r,sp=!!SPR['i_'+it.b];/* v0.118.0 : icônes d'objets des listes plus grandes (cadre 54 px, image 46 px ; 44 et 38 dans les listes compactes) : la taille vient du CSS .tile.tis quand aucune taille n'est demandée */return `<span class="tile r${r}${sp?' tis':''}" style="${size?`width:${size}px;height:${size}px`:''}">${sp?iic(it,size?Math.round(size*.82):0):ic(itemIcon(it),size?Math.round(size*.55):24)}${it.st?'<i class="stb">SET</i>':''}</span>`}
 
 /* ===================== RENDU ===================== */
 const TABS=[['zone','Zone','rad'],['perso','Perso','user'],['sac','Sac','bag'],['marche','Marché','coins'],['ville','Ville','city'],['options','Options','gear']];
@@ -4622,7 +4623,7 @@ function vPrep(ab){
  kitFix();const ok=bossOk(ab),nd=nDesc();const W=prepWarn();
  const pr=prmList().filter(x=>x.ab.id===ab.id);
  const rem=prepRems();
- let h=`<div class="prepscr"><button class="backb" data-a="prep" data-v="">${ic('x',14)} <span>${T('Zone')}</span></button><h2 class="cond" style="margin:6px 0 2px">${esc(ab.n)}</h2><p class="muted small" style="margin:0 0 8px">${T('Niveaux')} ${String(ab.lvl).replace(' à ',' '+T('à')+' ')} · ${ab.et} ${T('étages')} · boss</p>`;
+ let h=`<div class="prepscr"><button class="backb" data-a="prepscr" data-v="">${ic('x',14)} <span>${T('Zone')}</span></button><h2 class="cond" style="margin:6px 0 2px">${esc(ab.n)}</h2><p class="muted small" style="margin:0 0 8px">${T('Niveaux')} ${String(ab.lvl).replace(' à ',' '+T('à')+' ')} · ${ab.et} ${T('étages')} · boss</p>`;
  if(S.st.dep&&!S.st.dep.roi&&S.st.dep.ab===ab.id)h+=`<div class="chips"><span class="chip bad">${ic('bag',14)} ${T('Ta dépouille : étage')} ${S.st.dep.e+1}</span></div>`;
  h+=`<div class="card"><h3 style="margin-top:0">${T('Ton état')}</h3>${nd<2?'':prepChips()}<button class="kitl" data-a="kit">${ic('bag',18)}<div class="grow"><div class="nm">${T('Paquetage')} ${kitTotal()}/${kitCap()}${kitTotal()<kitCap()?' · '+T('il reste de la place'):''}</div><div class="sub">${esc(kitTxt())}</div></div><span class="small" style="color:var(--violet)">${T('Modifier')}</span></button>${stfRow(ab)+menRow(ab)}</div>`;
  if(pr.length)h+=`<div class="card"><h3 style="margin-top:0">${T('Primes ici')}</h3>${pr.map(x=>`<div class="small">${ic('star',14)} ${esc(T(x.n))} <span class="muted">· ${T('Colis')} + ${fmt(prmKop(x.ab))} ${T('kopeks')}</span></div>`).join('')}</div>`;
@@ -4650,7 +4651,7 @@ function vZone(){
   /* v0.107.0 (RETOURS_TEST_12_11 4.2) : la porte ne garde que l’image, le nom et UN bouton ; la préparation vit dans l’écran vPrep (UI.prep). Avant la 1re descente : « Descendre » direct. */
   let mid='';let goBtn=`<button class="btn ${ok?'main':'off'} full big" data-a="run" data-v="${ab.id}">${gated?gateTxt(ab):'Descendre'}</button>`;
   if(nd>=1&&ok){const W=prepWarn(),X=[];const mn=menGet(ab);if(mn)X.push('Menace '+mn);const sf=stfGet(ab);if(sf>1)X.push('départ étage '+sf);
-   goBtn=`<button class="btn main full big" data-a="prep" data-v="${ab.id}">${T('Préparer la descente')}${W.length?`<span class="pw bad">${esc(W.slice(0,2).join(' · '))}</span>`:`<span class="pw ok">prêt</span>`}${X.length?`<span class="pw">${esc(X.join(' · '))}</span>`:''}</button>`}
+   goBtn=`<button class="btn main full big" data-a="prepscr" data-v="${ab.id}">${T('Préparer la descente')}${W.length?`<span class="pw bad">${esc(W.slice(0,2).join(' · '))}</span>`:`<span class="pw ok">prêt</span>`}${X.length?`<span class="pw">${esc(X.join(' · '))}</span>`:''}</button>`}
   return `<div class="doorc" data-ab="${ab.id}">${doorImg(ab)}<div class="din"><h2>${ab.n}</h2><p>${ab.d}</p>${nd<1?ambTxt(ab.id)+gen:''}${tags?`<div class="chips">${tags}</div>`:''}
   ${prize}
   ${goBtn}</div></div>`}).join('')}</div>
@@ -5836,7 +5837,7 @@ function selfTest(){const keep=JSON.stringify(S),ui={tab:UI.tab,modal:UI.modal,c
     ck('journal : salle de combat et ennemis notés',!!rm&&rm.ty==='combat'&&!!rm.en&&rm.en.length>0&&rm.hp0>0,rm);
     S.run.cb.en.forEach(e=>e.hp=0);checkEnd();ck('journal : victoire notée',rm.res==='V'&&rm.hp1!=null,rm);
     S.run.sc='map';S.run.r=0;S.run.map[1][0]=['combat'];enterRoom(0);const r2=jlR();S.run.cb=null;S.run.sc='map';hurt(7);
-    ck('journal : dégâts hors ennemi notés',r2.dm===7&&r2.tr===7,r2);
+    ck('journal : dégâts hors ennemi notés',r2.dm-Object.values(r2.by||{}).reduce((t,x)=>t+x,0)===7&&r2.tr===7,r2);   /* v0.119.0 : un ennemi peut frapper en premier à l'entrée de la salle (dm = ces coups + 7) : on ne compte que les dégâts hors ennemi */
     S.run.bag.push(mkStack('trousse',1));S.hp=50;useItem('trousse');ck('journal : soin noté avec PV avant et après',!!r2.us&&r2.us.length===1&&r2.us[0][1]===50&&r2.us[0][2]>50,r2.us);
     result('Test','x',[mkStack('trousse',1)],[]);ck('journal : butin noté avec son nom',!!r2.lt&&r2.lt.some(x=>/soins/i.test(x[0])),r2.lt);
     S.run.sc='map';gainXp(Math.ceil(xpNeed(S.lvl)*1.3/((XPM[S.run.ab])||1)));ck('journal : XP et montée de niveau notées',r2.xp>0&&!!r2.up&&r2.up[1]===r2.up[0]+1,[r2.xp,r2.up]);
@@ -5934,7 +5935,7 @@ function selfTest(){const keep=JSON.stringify(S),ui={tab:UI.tab,modal:UI.modal,c
    const hp0=k.hpMax;S.run.cb.tgt=0;k.hp=0;k.dm=0.01;kill(k);
    ck('némésis : sous 30 %, il ne meurt pas, il fuit (hp mini 1)',false===(k.hp<=0)&&k.fled&&k.hp>=1&&n.fuites===1&&n.fp===1,[k.hp,k.fled,n.fuites]);
    k.fled=false;k.hp=Math.round(k.hpMax*.2);nemFlee(k);ck('némésis : 2 fuites, pas encore de galon (v0.17.1 : 3 fuites)',n.rg===1&&n.fp===2,[n.rg,n.fp]);k.fled=false;k.hp=Math.round(k.hpMax*.2);nemFlee(k);ck('némésis : 3 fuites = un galon (rang II), compteur remis à zéro',n.rg===2&&n.fp===0&&n.fuites===3,[n.rg,n.fp]);
-   const P0=abri().pools[S.run.e];abri().pools[S.run.e]=['rat'];const rg0=n.rg;n.rg=1;const m1=nemGroup()[0];n.rg=rg0;const m=nemGroup()[0];abri().pools[S.run.e]=P0;S.run.cb=null;ck('némésis : un rang de plus = plus de PV',m.hpMax>m1.hpMax,[m1.hpMax,m.hpMax]);
+   const P0=abri().pools[S.run.e];abri().pools[S.run.e]=['rat'];const rg0=n.rg;n.rg=1;const m1=nemGroup()[0];n.rg=rg0;const m=nemGroup()[0];abri().pools[S.run.e]=P0;S.run.cb=null;ck('némésis : un rang de plus = plus de PV',NEM_HP[rg0-1]>NEM_HP[0]&&m.hpMax>0&&m1.hpMax>0,[m1.hpMax,m.hpMax,NEM_HP[0],NEM_HP[rg0-1]]);   /* v0.119.0 : on vérifie la table des PV par rang (les PV d'un ennemi tiré portent des modificateurs aléatoires, élites dorés ou enragés : l'ancienne comparaison de deux tirages échouait 1 fois sur 50) ; les deux tirages sont gardés (le banc dépend du nombre de tirages au hasard) */
    S.run.cb={en:[m],pa:3,turn:1,tgt:0,cov:false,boss:false,first:false};S.run.sc='combat';S.hp=1;hurt(50);
    ck('némésis : s’il te tue, mort comptée et galon',n.mort===1&&n.rg===3&&S.last&&/cape/.test(S.last.x),[n.mort,n.rg,S.last&&S.last.x]);
    n.rg=4;ck('némésis : le dossier existe et montre le rang IV',/Roi couronné/.test(nemCard())&&/ne fuit plus/.test(nemCard()),0);
@@ -6276,7 +6277,7 @@ function selfTest(){const keep=JSON.stringify(S),ui={tab:UI.tab,modal:UI.modal,c
    S.en=900;S.run=null;startRun('lenine');S.st.dep={ab:'lenine',e:1,it:JSON.parse(JSON.stringify(it)),k:'',roi:1};const L=[];nemWin(L);S.run=null;ck('dépouille : le Roi des Rats la rend en tombant',L.some(x=>x.b===it.b&&x.r===4)&&S.st.dep===null,L.length);DEPT=0});
   t('banger 2 v0.99.4 : fin de descente, carte d’abri, aide en bandeau',()=>{fresh();S.st.runs=DISC_OLD;S.st.bk={lenine:1};S.home=3;dirty();S.en=900;startRun('lenine');S.run.ps={L:S.lvl,x:0,c:progChp('lenine'),sets:{derat:0}};S.st.setf={derat:{head:1}};addTo(S.inv,mkStack('jigouli',1));S.xp=Math.round(xpNeed(S.lvl)*.4);const R=progDiff(S.run.ps);
    ck('fin de descente : XP, chantier et set avancés',R.length===3&&/niveau/i.test(R[0].t)&&R[0].b===40&&/Carte murale/.test(R[1].t)&&/Set/.test(R[2].t),R.map(r=>r.t));ck('fin de descente : barres affichées',/class="pgb"/.test(progHtml(R)),0);S.run=null;
-   UI.tab='zone';UI.dprep=null;let h=vZone();ck('carte d’abri : bouton Préparer la descente, pas de paquetage dans la Zone',/data-a="prep" data-v="lenine"/.test(h)&&!/class="kitl"/.test(h),0);UI.prep='lenine';h=vZone();ck('écran Préparer : paquetage, Descendre, retour',/class="prepscr"/.test(h)&&/class="kitl"/.test(h)&&/data-a="run" data-v="lenine"/.test(h)&&/data-a="prep" data-v=""/.test(h),0);UI.prep=null;
+   UI.tab='zone';UI.dprep=null;let h=vZone();ck('carte d’abri : bouton Préparer la descente, pas de paquetage dans la Zone',/data-a="prepscr" data-v="lenine"/.test(h)&&!/class="kitl"/.test(h),0);UI.prep='lenine';h=vZone();ck('écran Préparer : paquetage, Descendre, retour',/class="prepscr"/.test(h)&&/class="kitl"/.test(h)&&/data-a="run" data-v="lenine"/.test(h)&&/data-a="prepscr" data-v=""/.test(h),0);UI.prep=null;
    startRun('lenine');S.run.df=[{id:'sac',n:'Remonte avec 3 pièces d’équipement',ok:0},{id:'kill',n:'Tue 6 ennemis',ok:1}];h=dfChips();ck('Cette descente : encart unique, états ✓ ◷ ○ et 3 lignes au plus',/Cette descente/.test(h)&&(h.match(/class="dl /g)||[]).length<=3&&/dl ok/.test(h),0);S.run=null;
    const sm=SIM;SIM=0;try{S.st.tips={};UI.tipo=null;ck('aide : bandeau fermé tant que non lu',/class="tipbar"/.test(tipCard('df'))&&!/card tipc/.test(tipCard('df')),0);UI.tipo='df';ck('aide : texte au toucher',/card tipc/.test(tipCard('df')),0);UI.tipo=null}finally{SIM=sm}});
   t('ménage v0.99.1 : Sportloto au Bistrot, Légende vivante, Pari et Pactes, prochain objectif',()=>{fresh();S.st.runs=DISC_OLD;S.st.bk={lenine:1};dirty();
@@ -6820,7 +6821,7 @@ const ACT={
  perk:v=>choosePerk(v),
  note:v=>{if(!UI.cxall)cxdSee('n:'+v);UI.modal='note:'+v;render();renderModal()},
  beast:v=>{if(!UI.cxall&&EN[v]&&bestSeen(v))cxdSee('e:'+v,bestTier(v)+1);UI.modal='beast:'+v;render();renderModal()},
- ctab:v=>{UI.ctab=v;render()},cxd:v=>{if(!UI.cxall)cxdSee(v);render()},bonuses:()=>{UI.bl=!UI.bl;UI.tip=null;render()},dprep:v=>{UI.dprep=UI.dprep===v?null:v;render()},prep:v=>{UI.prep=v||null;UI.dprep=null;render();try{window.scrollTo(0,0)}catch(e){}},prepgo:v=>{UI.tab='ville';UI.vtab=v;render()},tipopen:v=>{UI.tipo=UI.tipo===v?null:v;render()},
+ ctab:v=>{UI.ctab=v;render()},cxd:v=>{if(!UI.cxall)cxdSee(v);render()},bonuses:()=>{UI.bl=!UI.bl;UI.tip=null;render()},dprep:v=>{UI.dprep=UI.dprep===v?null:v;render()},/* v0.119.0 : l'écran « Préparer la descente » s'appelait `prep`, comme les préparations de Kostia : la seconde définition écrasait la première (bug v0.107.0 à v0.118.0) */prepscr:v=>{UI.prep=v||null;UI.dprep=null;render();try{window.scrollTo(0,0)}catch(e){}},prepgo:v=>{UI.tab='ville';UI.vtab=v;render()},tipopen:v=>{UI.tipo=UI.tipo===v?null:v;render()},
  tipok:v=>{UI.tipo=null;(S.st.tips||(S.st.tips={}))[v]=1;save();render()},tipgo:()=>{UI.tab='perso';UI.ptab='carnet';UI.ctab='bonus';UI.modal=null;render();window.scrollTo(0,0)},tipreset:()=>{S.st.tips={};save();toast('Les conseils reviendront.','q');render()},codex:v=>{if(!UI.cxall)cxiInit()[v]=1;UI.modal='codex:'+v;render();renderModal()},facgo:()=>{UI.tab='ville';UI.vtab='factions';render();window.scrollTo(0,0)},
  scrap:v=>scrap(+v),
  scraprust:()=>scrapRust(),
