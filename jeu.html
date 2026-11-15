@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Endzone 2141 v0.125.0</title>
+<title>Endzone 2141 v0.126.0</title>
 <!--APERCU DU LIEN v0.77.1 : carte affichée par Discord, WhatsApp, Messenger quand on partage le lien (image apercu.jpg à côté de index.html dans Endzone2141-jeu, fabriquée par tools/apercu_lien.py)-->
 <meta name="description" content="Descends dans les abris irradiés de Vivograd, loote, remonte vivant. RPG post-apo à l'humour noir, gratuit, sur téléphone, sans installation.">
 <meta property="og:type" content="website">
@@ -37,7 +37,7 @@
 :root[data-ab="lenine"],.doorc[data-ab="lenine"],.zh[data-ab="lenine"],.zrow[data-ab="lenine"]{--violet:#ffb84a;--violet-dim:#5a3d14}
 /* v0.14.0 : une teinte par abri, pendant la descente (racine) et sur la vignette de l'abri (.doorc) ; l'en-tête et la barre du bas gardent les couleurs du jeu */
 :root[data-ab="ligne2"],.doorc[data-ab="ligne2"],.zh[data-ab="ligne2"],.zrow[data-ab="ligne2"]{--bg:#0a120e;--panel:#111c16;--panel2:#17271e;--line:#264232;--mute:#8fb3a0;--violet:#3fd6c4;--violet-dim:#17514b;--pink:#ff9a3c;--pink-dim:#5c3512;--glow:255,154,60}
-:root[data-ab="iode"],.doorc[data-ab="iode"],.zh[data-ab="iode"],.zrow[data-ab="iode"]{--bg:#120b0d;--panel:#1b1215;--panel2:#26181d;--line:#47282f;--mute:#b79aa2;--violet:#dbeaff;--violet-dim:#3d4a5a;--pink:#ff2b45;--pink-dim:#5e1220;--glow:255,43,69}
+:root[data-ab="iode"],.doorc[data-ab="iode"],.zh[data-ab="iode"],.zrow[data-ab="iode"]{--bg:#120b0d;--panel:#1b1215;--panel2:#26181d;--line:#47282f;--mute:#b79aa2;--violet:#b4c2d6;--violet-dim:#34404f;--pink:#ff2b45;--pink-dim:#5e1220;--glow:255,43,69}
 :root[data-ab="kova"],.doorc[data-ab="kova"],.zh[data-ab="kova"],.zrow[data-ab="kova"]{--bg:#0e0f08;--panel:#171a0f;--panel2:#202515;--line:#3a4122;--mute:#a7ad86;--violet:#d9cb48;--violet-dim:#4d4a18;--pink:#9ee04c;--pink-dim:#33501a;--glow:158,224,76}
 :root[data-ab="aurora"],.doorc[data-ab="aurora"],.zh[data-ab="aurora"],.zrow[data-ab="aurora"]{--bg:#080d16;--panel:#0f1724;--panel2:#152135;--line:#233a5c;--mute:#8ea6c6;--violet:#86ff7a;--violet-dim:#1f4d2a;--pink:#3db8ff;--pink-dim:#123f5e;--glow:61,184,255}
 header,nav{--bg:#110b18;--panel:#1a1224;--panel2:#241933;--line:#3b2a52;--mute:#a090b4;--pink:#ff3fa4;--pink-dim:#6e1d4b;--violet:#b072ff;--violet-dim:#3e2868}
@@ -604,8 +604,11 @@ nav .dot{position:absolute;top:5px;left:calc(50% + 7px);width:9px;height:9px;bor
 #zwrap{position:relative;isolation:isolate;margin:0 -14px 8px;padding:0 14px 6px;overflow:clip;background:var(--bg)}
 /*v0.51.0 : UNE seule image, sans reflet symétrique (retour du joueur) : sa hauteur = celle de l'ancienne image + son reflet (2 x la hauteur naturelle), recadrée au centre, dégradé doux sur toute la hauteur (variante B du joueur, assombrie)*/
 /* v0.124.0 (retour du joueur, 15/11) : fond DÉZOOMÉ au maximum et plus lumineux. Avant : image recadrée de moitié (cover sur une boîte 1,18) et brightness .54 sous un dégradé jusqu'à .96 de noir. Maintenant : l'image ENTIÈRE en pleine largeur (format 2,36), centrée dans la hauteur de l'écran, bords haut et bas fondus ; derrière, la même image floue et sombre remplit le reste (pas de bande noire). */
-#zwrap::before{content:'';position:absolute;inset:-20px;z-index:-2;background:var(--rd) center/cover no-repeat;filter:blur(16px) brightness(.33) saturate(1.1)}
-#zwrap::after{content:'';display:block;position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);aspect-ratio:2.36;z-index:-1;pointer-events:none;background:var(--rd) center/100% 100% no-repeat;filter:brightness(.62) saturate(1.05);-webkit-mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent);mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent)}
+/* v0.126.0 (retour du joueur : « image trop zoomée » sur le monte-charge de l'Hôpital) : le fond flou était étiré sur TOUTE la hauteur de l'écran (cover) : grossi de x2 (combat) à x5,5 (monte-charge). Maintenant il garde la largeur de l'écran SANS grossir (x1) et se répète vers le bas ; l'image nette est centrée en combat, collée en haut ailleurs. Combat un peu plus clair (.70 / .36). */
+#zwrap::before{content:'';position:absolute;inset:-20px;z-index:-2;background:var(--rd) 50% 0/100% auto repeat-y;filter:blur(16px) brightness(.33) saturate(1.1)}
+#zwrap:has(.enemies)::before{background-position:50% 50%;filter:blur(16px) brightness(.36) saturate(1.1)}
+#zwrap::after{content:'';display:block;position:absolute;left:0;right:0;top:0;aspect-ratio:2.36;z-index:-1;pointer-events:none;background:var(--rd) center/100% 100% no-repeat;filter:brightness(.62) saturate(1.05);-webkit-mask-image:linear-gradient(180deg,#000 70%,transparent);mask-image:linear-gradient(180deg,#000 70%,transparent)}
+#zwrap:has(.enemies)::after{top:50%;transform:translateY(-50%);filter:brightness(.70) saturate(1.05);-webkit-mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent);mask-image:linear-gradient(180deg,transparent,#000 16%,#000 84%,transparent)}
 #zwrap .logbox.run{background:rgba(12,7,20,.8);margin-top:0}
 #zwrap .logbox.run .log div{text-shadow:0 1px 2px #000}
 #zwrap .enemies{margin:0;padding:0;background:none;border:0;box-shadow:none}
@@ -621,9 +624,12 @@ nav .dot{position:absolute;top:5px;left:calc(50% + 7px);width:9px;height:9px;bor
 .trl{display:grid;gap:6px;margin-top:8px}.trr{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;border:1.5px solid var(--line);background:var(--panel2)}.trr.on{border-color:var(--pink)}.trr .pd{font-size:12px;opacity:.75}.trr .btn{min-width:38px;padding:6px 0}.trr .btn:disabled{opacity:.35}.trn{min-width:20px;text-align:center}
 .stickc2{margin-top:12px}.stickc2 .btn:disabled{opacity:.5}
 /*FICHES TRANSPARENTES v0.40.1*/
-#zwrap.fc{padding-bottom:14px}
+/* v0.126.0 : sur les fiches, l'image de l'abri occupe un bandeau DÉZOOMÉ en haut (pleine largeur, format 2,36 : même hauteur que l'image nette ::after) au lieu de se cacher derrière les cartes */
+#zwrap.fc{padding-bottom:14px;padding-top:calc((100% + 28px)/2.36)}
+#zwrap.fc::after{filter:brightness(.80) saturate(1.05);-webkit-mask-image:linear-gradient(180deg,#000 82%,transparent);mask-image:linear-gradient(180deg,#000 82%,transparent)}
 /*FOND DES FICHES PLUS CLAIR v0.56.0 : règle générale pour toutes les salles non combat de tous les abris (maquette B du joueur) ; le combat garde le fond de la v0.51.0*/
-#zwrap.fc::before{filter:brightness(.85);background:linear-gradient(180deg,rgba(13,10,21,.05) 0%,rgba(13,10,21,.3) 55%,rgba(13,10,21,.6) 100%),var(--rd) 50% 50%/cover no-repeat}
+/* v0.126.0 : fiches (monte-charge, événements, résultats) : plus d'image recadrée en cover sur toute la hauteur (grossie jusqu'à x5,5) ; fond flou à l'échelle 1 qui se répète, l'image nette pleine largeur reste en haut */
+#zwrap.fc::before{filter:blur(10px) brightness(.55) saturate(1.1);background:var(--rd) 50% 0/100% auto repeat-y}
 #zwrap.fc .card.evc{background:rgba(12,7,20,.6);border:1.5px solid var(--pink);margin:8px 0 0;box-shadow:none}
 #zwrap.fc .card.evc>p,#zwrap.fc .card.evc .small,#zwrap.fc .card.evc .ctitle h2,#zwrap.fc .card.evc .chip{text-shadow:0 1px 3px #000}
 #zwrap.fc .card.evc .stack,#zwrap.fc .card.evc .choice,#zwrap.fc .card.evc .perkc{background:#0f0a18;margin-left:-12px;margin-right:-12px;padding:10px 12px}
@@ -979,7 +985,7 @@ nav .dot{position:absolute;top:5px;left:calc(50% + 7px);width:9px;height:9px;bor
  Fin du fichier : démarrage (load, awayCheck) puis render().
 ============================================================================ */
 'use strict';
-const VERSION='0.125.0';
+const VERSION='0.126.0';
 // Niveau maximum du personnage (v0.12.12, décision du joueur du 24/10/2026 : 40, atteint en environ 10 h sans auto-combat ; extensible). Tranches des abris : voir ABRIS (lv, lvl) et docs/GDD.md.
 const LVMAX=40;
 // Dégâts minimum d'un coup ennemi, en part du coup brut (v0.12.13, décision liée au journal #8 du joueur) : l'armure et la réduction fixe ne peuvent plus ramener un coup à 1 PV. Ne touche pas les persos peu armés.
